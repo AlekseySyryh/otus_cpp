@@ -4,7 +4,7 @@
 
 int main(int argc, char const *argv[])
 {
+	std::cout << "build " << version() << std::endl;
 	std::cout << "Hello, World!" << std::endl;
-	std::cout << "Version " << version() << std::endl;
 	return 0;
 }
