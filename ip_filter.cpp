@@ -44,7 +44,7 @@ struct ipAddress {
                 throw std::logic_error("Wrong ip");
             }
         }
-        tuple = std::make_tuple(digits[0], digits[1], digits[2], digits[3]);
+        tuple = std::tie(digits[0], digits[1], digits[2], digits[3]);
     }
 
     ipAddressTuple tuple;
