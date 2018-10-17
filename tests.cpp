@@ -92,6 +92,14 @@ BOOST_AUTO_TEST_SUITE(test_ipAddress)
 
     }
 
+    BOOST_AUTO_TEST_CASE(AddressEqual) {
+        ipAddress address1("1.2.3.4");
+        ipAddress address2("1.2.3.4");
+        ipAddress address3("1.2.3.5");
+        BOOST_CHECK(address1 == address2);
+        BOOST_CHECK(!(address1 == address3));
+    }
+
 BOOST_AUTO_TEST_SUITE_END()
 
 BOOST_AUTO_TEST_SUITE(test_Processer)
