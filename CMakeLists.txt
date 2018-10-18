@@ -7,7 +7,7 @@ else ($ENV{TRAVIS_BUILD_NUMBER})
 endif ($ENV{TRAVIS_BUILD_NUMBER})
 
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 14)
 
 find_package(Boost COMPONENTS unit_test_framework REQUIRED)
 
@@ -16,7 +16,7 @@ add_executable(ip_filter ip_filter.cpp split.h ipaddress.h process.h)
 add_executable(test_main tests.cpp split.h ipaddress.h process.h)
 
 set_target_properties(ip_filter PROPERTIES
-        CXX_STANDARD 17
+        CXX_STANDARD 14
         CXX_STANDARD_REQUIRED ON
         COMPILE_OPTIONS "-Wpedantic;-Wall;-Wextra;-Werror;"
         )
@@ -43,3 +43,26 @@ set(CPACK_PACKAGE_CONTACT asyryh@gmail.com)
 include(CPack)
 
 enable_testing()
+
+add_test(case1 test_main)
+add_test(case2 test_main)
+add_test(case3 test_main)
+add_test(case4 test_main)
+add_test(case5 test_main)
+add_test(case6 test_main)
+add_test(WrongLength test_main)
+add_test(WrongNumber test_main)
+add_test(NonNumber test_main)
+add_test(TupleChecker test_main)
+add_test(IsMatchFirst test_main)
+add_test(IsMatchTwo test_main)
+add_test(IsMatchAny test_main)
+add_test(AddressEqual test_main)
+add_test(Sort test_main)
+add_test(ShowAll test_main)
+add_test(Filter1Match test_main)
+add_test(Filter1NoMatch test_main)
+add_test(Filter2Match test_main)
+add_test(Filter2NoMatch test_main)
+add_test(FilterAnyMatch test_main)
+add_test(FilterAnyNoMatch test_main)
