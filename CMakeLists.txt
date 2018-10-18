@@ -7,7 +7,7 @@ else ($ENV{TRAVIS_BUILD_NUMBER})
 endif ($ENV{TRAVIS_BUILD_NUMBER})
 
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 
 find_package(Boost COMPONENTS unit_test_framework REQUIRED)
 
@@ -16,9 +16,9 @@ add_executable(ip_filter ip_filter.cpp split.h ipaddress.h process.h)
 add_executable(test_main tests.cpp split.h ipaddress.h process.h)
 
 set_target_properties(ip_filter PROPERTIES
-        CXX_STANDARD 14
+        CXX_STANDARD 17
         CXX_STANDARD_REQUIRED ON
-        COMPILE_OPTIONS "-Wpedantic;-Wall;-Wextra;-Werror;-std=c++14"
+        COMPILE_OPTIONS "-Wpedantic;-Wall;-Wextra;-Werror;"
         )
 
 set_target_properties(test_main PROPERTIES
