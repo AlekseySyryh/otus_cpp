@@ -18,7 +18,7 @@ add_executable(test_main tests.cpp split.h ipaddress.h process.h)
 set_target_properties(ip_filter PROPERTIES
         CXX_STANDARD 14
         CXX_STANDARD_REQUIRED ON
-        COMPILE_OPTIONS "-Wpedantic;-Wall;-Wextra;-Werror;"
+        COMPILE_OPTIONS "-Wpedantic;-Wall;-Wextra;-Werror;-std=c++1y"
         )
 
 set_target_properties(test_main PROPERTIES
