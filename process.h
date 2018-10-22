@@ -3,83 +3,51 @@
 #include "ipaddress.h"
 #include <vector>
 
-void sortVector(std::vector<ipAddress> &ip_pool);
 
-template<typename FuncType>
-void showAll(const std::vector<ipAddress> &ip_pool, FuncType processer);
-
-template<typename FuncType>
-void filter1(std::vector<ipAddress> &ip_pool, FuncType processer);
-
-template<typename FuncType>
-void filter2(std::vector<ipAddress> &ip_pool, FuncType processer);
-
-template<typename FuncType>
-void filterAny(const std::vector<ipAddress> &ip_pool, FuncType processer);
-
-template<typename FuncType>
-void process(std::vector<ipAddress> &ip_pool, FuncType processer) {
-    sortVector(ip_pool);
-    showAll(ip_pool, processer);
-    filter1(ip_pool, processer);
-    filter2(ip_pool, processer);
-    filterAny(ip_pool, processer);
-}
 
 void sortVector(std::vector<ipAddress> &ip_pool) {
     //O(NLogN)
-    sort(ip_pool.rbegin(), ip_pool.rend(),
-         [](const auto &lhs, const auto &rhs) { return lhs.tuple < rhs.tuple; });
+    sort(ip_pool.rbegin(), ip_pool.rend());
 }
 
 template<typename FuncType>
-void showAll(const std::vector<ipAddress> &ip_pool, FuncType processer) {//O(N)
+void showAll(const std::vector<ipAddress> &ip_pool, FuncType processor) {//O(N)
     for (const auto &ip : ip_pool) {
-        processer(ip.getAddress());
+        processor(ip.getString());
     }
 }
 
 template<typename FuncType>
-void filter1(std::vector<ipAddress> &ip_pool, FuncType processer) {//O(LogN)
+void filter(std::vector<ipAddress> &ip_pool, int a, FuncType processor) {
+    filter(ip_pool, a, -1, processor);
+}
+
+
+template<typename FuncType>
+void filter(std::vector<ipAddress> &ip_pool, int a, int b, FuncType processor) {//O(LogN)
 //Хочу уточнить, что лично я бы так делать не стал, а ограничился бы банальным и понятным линейным
 //поиском с его O(N), но в задании есть критерий "скорость" и нет критерия "понятность", так что сами виноваты :)
+
     auto it = lower_bound(ip_pool.begin(), ip_pool.end(),
-                          ipAddress("1.255.255.255"),
+                          ipAddress{a, b == -1 ? 255 : b, 255, 255},
                           [](const auto &lhs, const auto &rhs) {
-                              return lhs.tuple > rhs.tuple;
+                              return *lhs.getDigits() > *rhs.getDigits();
                           });
 
     while (it != ip_pool.end()) {
-        if (!it->isMatch(1)) {
+        if (!it->isMatch(a, b)) {
             break;
         }
-        processer(it->getAddress());
+        processor(it->getString());
         ++it;
     }
 }
 
 template<typename FuncType>
-void filter2(std::vector<ipAddress> &ip_pool, FuncType processer) {//O(LogN)
-    auto it = lower_bound(ip_pool.begin(), ip_pool.end(),
-                          ipAddress("46.70.255.255"),
-                          [](const auto &lhs, const auto &rhs) {
-                              return lhs.tuple > rhs.tuple;
-                          });
-
-    while (it != ip_pool.end()) {
-        if (!it->isMatch(46, 70)) {
-            break;
-        }
-        processer(it->getAddress());
-        ++it;
-    }
-}
-
-template<typename FuncType>
-void filterAny(const std::vector<ipAddress> &ip_pool, FuncType processer) {//O(N)
+void filterAny(const std::vector<ipAddress> &ip_pool, int value, FuncType processor) {//O(N)
     for (const auto &ip : ip_pool) {
-        if (ip.isMatchAny(46)) {
-            processer(ip.getAddress());
+        if (ip.isMatchAny(value)) {
+            processor(ip.getString());
         }
     }
 }

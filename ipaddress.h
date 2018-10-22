@@ -5,27 +5,31 @@
 #include <algorithm>
 #include <sstream>
 
-using ipAddressTuple = std::tuple<int, int, int, int>;
-
 class ipAddress {
 public:
-    explicit ipAddress(const std::string &ip) : digits() {
-        auto digitsStrings = split(ip, '.');
+    explicit ipAddress(const std::string &ip) : ipAddress(splitInt(ip, '.')) {
+    }
+
+    ipAddress(std::initializer_list<int> digits) : ipAddress(std::vector<int>(digits)) {
+    }
+
+    explicit ipAddress(std::vector<int> digitsStrings) : digits() {
         if (digitsStrings.size() != 4) {
             throw std::logic_error("Wrong ip");
         }
         for (int i = 0; i < 4; ++i) {
-            digits[i] = std::stoi(digitsStrings[i]);
+            digits[i] = digitsStrings[i];
             if (digits[i] < 0 || digits[i] > 255) {
                 throw std::logic_error("Wrong ip");
             }
         }
-        tuple = std::tie(digits[0], digits[1], digits[2], digits[3]);
     }
 
-    ipAddressTuple tuple;
+    const std::array<int, 4> *getDigits() const {
+        return &digits;
+    }
 
-    std::string getAddress() const {
+    std::string getString() const {
         std::ostringstream oss;
         bool first = true;
         for (auto d : digits) {
@@ -54,5 +58,9 @@ private:
 };
 
 bool operator==(const ipAddress &lhs, const ipAddress &rhs) {
-    return lhs.tuple == rhs.tuple;
+    return *lhs.getDigits() == *rhs.getDigits();
+}
+
+bool operator<(const ipAddress &lhs, const ipAddress &rhs) {
+    return *lhs.getDigits() < *rhs.getDigits();
 }
