@@ -34,10 +34,7 @@ void filter(std::vector<ipAddress> &ip_pool, int a, int b, FuncType processor) {
                               return *lhs.getDigits() > *rhs.getDigits();
                           });
 
-    while (it != ip_pool.end()) {
-        if (!it->isMatch(a, b)) {
-            break;
-        }
+    while (it != ip_pool.end() && it->isMatch(a, b)) {
         processor(it->getString());
         ++it;
     }
