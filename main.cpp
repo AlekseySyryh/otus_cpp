@@ -14,17 +14,6 @@ auto fillMap() {
     return map;
 }
 
-class a {
-public:
-    a() {
-        std::cout << "CA" << std::endl;
-    }
-
-    ~a() {
-        std::cout << "DA" << std::endl;
-    }
-};
-
 int main() {
     auto map1 = fillMap<std::map<int, int>>();
     std::cout << std::endl;

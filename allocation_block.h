@@ -7,46 +7,29 @@
 template<typename T, size_t len>
 class allocationBlock {
 public:
-    allocationBlock() : useMap(len), full() {
-        empty = true;
+    allocationBlock() : used(0) {
         block = reinterpret_cast<T *>(std::malloc(len * sizeof(T)));
     }
 
-    T *allocate() {
-        auto it = std::find_if(useMap.begin(), useMap.end(), [](bool a) { return !a; });
-        if (it == useMap.end()) {
+    T *allocate(size_t req_size) {
+        if (getFreeSize() < req_size) {
             throw std::bad_alloc();
         }
-        *it = true;
-        full = std::all_of(useMap.begin(), useMap.end(), [](bool a) { return a; });
-        empty = false;
-        return block + (it - useMap.begin());
+        T *retVal = block + used;
+        used += req_size;
+        return retVal;
     }
 
-    void free(T *free) {
-        useMap[free - block] = false;
-        full = false;
-        empty = std::all_of(useMap.begin(), useMap.end(), [](bool a) { return !a; });
-    }
-
-    bool have(T *ref) {
-        return ref >= block && ref <= block + len;
+    size_t getFreeSize() {
+        return len - used;
     }
 
     ~allocationBlock() {
         std::free(block);
     }
 
-    bool isEmpty() {
-        return empty;
-    }
-
-    bool isFull() {
-        return full;
-    }
 
 private:
     T *block;
-    bool empty, full;
-    std::vector<bool> useMap;
+    size_t used;
 };
