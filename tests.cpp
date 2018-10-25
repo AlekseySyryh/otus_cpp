@@ -1,7 +1,8 @@
 #include "split.h"
 #include "ipaddress.h"
-#include "process.h"
+#include "processor.h"
 #include <vector>
+#include <iostream>
 
 #define BOOST_TEST_MODULE test_main
 
@@ -106,11 +107,14 @@ BOOST_AUTO_TEST_SUITE(test_ipAddress)
         BOOST_CHECK(address1 == address2);
         BOOST_CHECK(!(address1 == address3));
         BOOST_CHECK(address1 < address3);
+        BOOST_CHECK(address3 > address2);
     }
 
 BOOST_AUTO_TEST_SUITE_END()
 
-BOOST_AUTO_TEST_SUITE(test_Processer)
+BOOST_AUTO_TEST_SUITE(test_Processor)
+
+
 
     BOOST_AUTO_TEST_CASE(Sort) {
         std::vector<ipAddress> ips{
@@ -135,7 +139,11 @@ BOOST_AUTO_TEST_SUITE(test_Processer)
                 ipAddress("1.1.2.1"),
                 ipAddress("1.1.1.1"),
         };
-        sortVector(ips);
+        std::vector<std::string> result;
+        processor([&result](std::string row) {
+            result.push_back(row);
+        }).sortVector(ips);
+
         BOOST_CHECK(ips == expected);
     }
 
@@ -146,9 +154,9 @@ BOOST_AUTO_TEST_SUITE(test_Processer)
                 ipAddress("1.1.1.1"),
         };
         std::vector<std::string> result;
-        showAll(ips, [&result](std::string row) {
+        processor([&result](std::string row) {
             result.push_back(row);
-        });
+        }).showAll(ips);
         std::vector<std::string> expected{"1.1.10.1", "1.1.2.1", "1.1.1.1"};
         BOOST_CHECK(result == expected);
     }
@@ -160,9 +168,9 @@ BOOST_AUTO_TEST_SUITE(test_Processer)
                 ipAddress("1.1.1.1"),
         };
         std::vector<std::string> result;
-        filter(ips, 1, [&result](std::string row) {
+        processor([&result](std::string row) {
             result.push_back(row);
-        });
+        }).filter(ips, 1);
         std::vector<std::string> expected{"1.1.2.1", "1.1.1.1"};
         BOOST_CHECK(result.size() == 2);
         BOOST_CHECK(result == expected);
@@ -175,9 +183,9 @@ BOOST_AUTO_TEST_SUITE(test_Processer)
                 ipAddress("2.1.1.1"),
         };
         std::vector<std::string> result;
-        filter(ips, 5, [&result](std::string row) {
+        processor([&result](std::string row) {
             result.push_back(row);
-        });
+        }).filter(ips, 5);
         std::vector<std::string> expected{};
         BOOST_CHECK(result == expected);
     }
@@ -192,9 +200,9 @@ BOOST_AUTO_TEST_SUITE(test_Processer)
                 ipAddress("1.1.1.1"),
         };
         std::vector<std::string> result;
-        filter(ips, 46, 70, [&result](std::string row) {
+        processor([&result](std::string row) {
             result.push_back(row);
-        });
+        }).filter(ips, 46, 70);
         std::vector<std::string> expected{"46.70.255.1", "46.70.1.1"};
         BOOST_CHECK(result == expected);
     }
@@ -207,9 +215,9 @@ BOOST_AUTO_TEST_SUITE(test_Processer)
                 ipAddress("1.1.1.1"),
         };
         std::vector<std::string> result;
-        filter(ips, 46, 70, [&result](std::string row) {
+        processor([&result](std::string row) {
             result.push_back(row);
-        });
+        }).filter(ips, 46, 70);
         std::vector<std::string> expected{};
         BOOST_CHECK(result == expected);
     }
@@ -227,9 +235,9 @@ BOOST_AUTO_TEST_SUITE(test_Processer)
 
         };
         std::vector<std::string> result;
-        filterAny(ips, 46, [&result](std::string row) {
+        processor([&result](std::string row) {
             result.push_back(row);
-        });
+        }).filterAny(ips, 46);
         std::vector<std::string> expected{"255.255.255.46",
                                           "255.255.46.255",
                                           "255.46.255.255",
@@ -251,9 +259,9 @@ BOOST_AUTO_TEST_SUITE(test_Processer)
 
         };
         std::vector<std::string> result;
-        filterAny(ips, 46, [&result](std::string row) {
+        processor([&result](std::string row) {
             result.push_back(row);
-        });
+        }).filterAny(ips, 46);
         std::vector<std::string> expected{};
         BOOST_CHECK(result == expected);
     }

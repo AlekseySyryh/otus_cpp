@@ -3,7 +3,7 @@
 #include <vector>
 #include <algorithm>
 #include "ipaddress.h"
-#include "process.h"
+#include "processor.h"
 
 
 int main() {
@@ -16,15 +16,15 @@ int main() {
         }
         //Вынесено в отдельную функцию и декомпозировано для удобства тестирования
 
-        auto processor = [](const std::string &result) {
+        processor pr([](const std::string &result) {
             std::cout << result << "\n";//Не std::endl - без сбороса буфера будет быстрее
-        };
+        });
 
-        sortVector(ip_pool);
-        showAll(ip_pool, processor);
-        filter(ip_pool, 1, processor);
-        filter(ip_pool, 46, 70, processor);
-        filterAny(ip_pool, 46, processor);
+        pr.sortVector(ip_pool);
+        pr.showAll(ip_pool);
+        pr.filter(ip_pool, 1);
+        pr.filter(ip_pool, 46, 70);
+        pr.filterAny(ip_pool, 46);
     }
     catch (const std::exception &e) {
         std::cerr << e.what() << std::endl;

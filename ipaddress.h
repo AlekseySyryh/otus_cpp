@@ -64,3 +64,7 @@ bool operator==(const ipAddress &lhs, const ipAddress &rhs) {
 bool operator<(const ipAddress &lhs, const ipAddress &rhs) {
     return *lhs.getDigits() < *rhs.getDigits();
 }
+
+bool operator>(const ipAddress &lhs, const ipAddress &rhs) {
+    return *lhs.getDigits() > *rhs.getDigits();
+}
