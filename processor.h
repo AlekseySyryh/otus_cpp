@@ -1,3 +1,5 @@
+#include <utility>
+
 #pragma once
 
 #include "ipaddress.h"
@@ -5,12 +7,12 @@
 #include <functional>
 
 struct processor {
-    processor(
-            const std::function<void(std::string)> &processor) :
-            func(processor) {}
+    explicit processor(
+            std::function<void(std::string)> processor) :
+            func(std::move(processor)) {}
 
     void sortVector(std::vector<ipAddress> &ip_pool) {
-        sort(ip_pool.begin(), ip_pool.end(), std::greater<ipAddress>());
+        sort(ip_pool.begin(), ip_pool.end(), std::greater<>());
     }
 
     void showAll(std::vector<ipAddress> &ip_pool) const {
