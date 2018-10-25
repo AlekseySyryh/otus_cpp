@@ -17,7 +17,7 @@ int main() {
         //Вынесено в отдельную функцию и декомпозировано для удобства тестирования
 
         processor pr([](const std::string &result) {
-            std::cout << result << "\n";//Не std::endl - без сбороса буфера будет быстрее
+            std::cout << result << std::endl;
         });
 
         pr.sortVector(ip_pool);
