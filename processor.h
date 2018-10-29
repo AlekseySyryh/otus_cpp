@@ -23,16 +23,6 @@ struct processor {
 
     template<typename ...Args>
     void filter(std::vector<ipAddress> &ip_pool, Args... args) const {
-        /* Вообще тут было
-           for (const auto &ip : ip_pool) {
-            if (ip.isMatch(args...)) {
-                func(ip.getString());
-            }
-        }
-        Но после вчерашней лекции я понял как был не прав - ведь линейный поиск уже есть в
-        стандартной библиотеке, а я коварно навелосипедил...
-
-         Исправляюсь:*/
         auto it = ip_pool.begin();
         while ((it = std::find_if(
                 it,
@@ -43,16 +33,10 @@ struct processor {
             func(it->getString());
             ++it;
         }
-        //P.S. Извините не удержался... :)
     }
 
 
     void filterAny(std::vector<ipAddress> &ip_pool, int value) const {
-        /*for (const auto &ip : ip_pool) {
-            if (ip.isMatchAny(value)) {
-                func(ip.getString());
-            }
-        }*/
         auto it = ip_pool.begin();
         while ((it = std::find_if(
                 it,

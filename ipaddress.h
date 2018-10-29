@@ -44,8 +44,23 @@ public:
         return oss.str();
     }
 
-    bool isMatch(int a, int b = -1) const {
-        return digits[0] == a && (b == -1 || digits[1] == b);
+#ifdef empty_isMatch_allowed
+    bool isMatch() const {
+        return true;
+    }
+#endif
+
+    template<typename ...Args>
+    bool isMatch(Args ...args) const {
+        static_assert(sizeof...(args) <= 4, "Too many parameters");
+#ifndef empty_isMatch_allowed
+        static_assert(sizeof...(args) > 0, "Too few parameters");
+#endif
+        static_assert(
+                std::is_same<std::common_type_t<Args...>, int>::value,
+                "Wrong parameter types");
+        std::array<int, sizeof...(args)> filter{args...};
+        return std::equal(filter.begin(), filter.end(), digits.begin());
     }
 
     bool isMatchAny(int digit) const {

@@ -1,3 +1,5 @@
+#define empty_isMatch_allowed
+
 #include "split.h"
 #include "ipaddress.h"
 #include "processor.h"
@@ -115,7 +117,6 @@ BOOST_AUTO_TEST_SUITE_END()
 BOOST_AUTO_TEST_SUITE(test_Processor)
 
 
-
     BOOST_AUTO_TEST_CASE(Sort) {
         std::vector<ipAddress> ips{
                 ipAddress("1.1.1.1"),
@@ -158,6 +159,22 @@ BOOST_AUTO_TEST_SUITE(test_Processor)
             result.push_back(row);
         }).showAll(ips);
         std::vector<std::string> expected{"1.1.10.1", "1.1.2.1", "1.1.1.1"};
+        BOOST_CHECK(result == expected);
+    }
+
+
+    BOOST_AUTO_TEST_CASE(FilterEmptyMatch) {
+        std::vector<ipAddress> ips{
+                ipAddress("2.1.10.1"),
+                ipAddress("1.1.2.1"),
+                ipAddress("1.1.1.1"),
+        };
+        std::vector<std::string> result;
+        processor([&result](std::string row) {
+            result.push_back(row);
+        }).filter(ips);
+        std::vector<std::string> expected{"2.1.10.1", "1.1.2.1", "1.1.1.1"};
+        BOOST_CHECK(result.size() == 3);
         BOOST_CHECK(result == expected);
     }
 
