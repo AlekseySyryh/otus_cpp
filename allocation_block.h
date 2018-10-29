@@ -20,7 +20,7 @@ public:
         return retVal;
     }
 
-    size_t getFreeSize() {
+    size_t getFreeSize() const {
         return len - used;
     }
 

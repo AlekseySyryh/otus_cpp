@@ -2,6 +2,7 @@
 
 #include "allocation_block.h"
 #include <forward_list>
+#include <algorithm>
 
 template<typename T, int len>
 struct myAllocator {
@@ -19,13 +20,23 @@ struct myAllocator {
     };
 
     T *allocate(std::size_t n) {
-        for (auto &block : blocks) {
-            if (block.getFreeSize() >= n) {
-                return block.allocate(n);
-            }
+        if (n > len || n == 0) {
+            throw std::bad_alloc();
         }
-        blocks.emplace_front();
-        return blocks.front().allocate(n);
+        if (n == len) {
+            return allocateNewBlock(n);
+        }
+        auto it = std::find_if(
+                blocks.begin(),
+                blocks.end(),
+                [n](const auto &block) {
+                    return block.getFreeSize() >= n;
+                });
+        if (it != blocks.end()) {
+            return it->allocate(n);
+        } else {
+            return allocateNewBlock(n);
+        }
     }
 
     void deallocate(__attribute__((unused)) T *p, __attribute__((unused)) std::size_t n) {
@@ -38,5 +49,11 @@ struct myAllocator {
 
     void destroy(T *p) {
         p->~T();
+    }
+
+private:
+    T *allocateNewBlock(std::size_t n) {
+        blocks.emplace_front();
+        return blocks.front().allocate(n);
     }
 };
