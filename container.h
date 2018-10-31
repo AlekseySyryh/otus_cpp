@@ -21,14 +21,15 @@ public:
         });
     }
 
-    explicit container(const container<T> &other, const Allocator &alloc = Allocator()) :
+    template<class Alloc>
+    explicit container(const container<T, Alloc> &other, const Allocator &alloc = Allocator()) :
             container(alloc) {
-        container_element<T> *current = nullptr;
+        copyInit(other);
+    }
 
-        std::for_each(other.begin(), other.end(),
-                      [&current, this](const auto &other) {
-                          current = emplace_after(current, other.element);
-                      });
+    explicit container(const container<T, Allocator> &other, const Allocator &alloc = Allocator()) :
+            container(alloc) {
+        copyInit(other);
     }
 
     container(container<T, Allocator> &&other) :
@@ -83,5 +84,15 @@ private:
         allocator.construct(new_element, std::forward<Args>(args)..., new_element->next);
         after->next = new_element;
         return new_element;
+    }
+
+    template<typename Alloc>
+    void copyInit(const container<T, Alloc> &other) {
+        container_element<T> *current = nullptr;
+
+        std::for_each(other.begin(), other.end(),
+                      [&current, this](const auto &other) {
+                          current = this->emplace_after(current, other.element);
+                      });
     }
 };
