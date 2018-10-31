@@ -14,35 +14,29 @@ public:
 
     template<class InputIt>
     container(InputIt firstIt, InputIt lastIt,
-              const Allocator &alloc = Allocator()):container(alloc) {
+              const Allocator &alloc = Allocator()) : container(alloc) {
 
         std::for_each(firstIt, lastIt, [this](const T &arg) {
             emplace(arg);
         });
     }
 
-    template<typename Alloc = std::allocator<container_element<T>>>
-    explicit container(const container<T, Alloc> &other, const Allocator &alloc = Allocator()) :
+    explicit container(const container<T> &other, const Allocator &alloc = Allocator()) :
             container(alloc) {
         container_element<T> *current = nullptr;
 
         std::for_each(other.begin(), other.end(),
                       [&current, this](const auto &other) {
-                          if (first == nullptr) {
-                              emplace(other.element);
-                              current = first;
-                          } else {
-                              emplace_after(current, other.element);
-                              current = current->next;
-                          }
+                          current = emplace_after(current, other.element);
                       });
     }
 
     container(container<T, Allocator> &&other) :
-            container(allocator) {
+            container() {
 
         std::swap(this->first, other.first);
     }
+
     ~container() {
         while (first != nullptr) {
             container_element<T> *old_first = first;
@@ -80,9 +74,14 @@ private:
 
 
     template<typename ...Args>
-    void emplace_after(container_element<T> *after, Args &&...args) {
+    container_element<T> *emplace_after(container_element<T> *after, Args &&...args) {
+        if (after == nullptr) {
+            emplace(args...);
+            return first;
+        }
         container_element<T> *new_element = allocator.allocate(1);
         allocator.construct(new_element, std::forward<Args>(args)..., new_element->next);
         after->next = new_element;
+        return new_element;
     }
 };
