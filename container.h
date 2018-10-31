@@ -13,10 +13,10 @@ public:
     }
 
     template<class InputIt>
-    container(InputIt first, InputIt last,
+    container(InputIt firstIt, InputIt lastIt,
               const Allocator &alloc = Allocator()):container(alloc) {
 
-        std::for_each(first, last, [this](const T &arg) {
+        std::for_each(firstIt, lastIt, [this](const T &arg) {
             emplace(arg);
         });
     }
