@@ -4,7 +4,7 @@
 
 template<typename T>
 struct container_element {
-    container_element(T &el, container_element<T> *next) : element(el), next(next) {}
+    container_element(const T &el, container_element<T> *next) : element(el), next(next) {}
 
     const T element;
     container_element<T> *next;
