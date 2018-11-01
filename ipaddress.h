@@ -52,7 +52,7 @@ public:
 
     template<typename ...Args>
     bool isMatch(Args ...args) const {
-        static_assert(sizeof...(args) <= 4, "Too many parameters");
+        static_assert(sizeof...(args) <= digitsInIp, "Too many parameters");
 #ifndef empty_isMatch_allowed
         static_assert(sizeof...(args) > 0, "Too few parameters");
 #endif
@@ -60,16 +60,17 @@ public:
                 std::is_same<std::common_type_t<Args...>, int>::value,
                 "Wrong parameter types");
         std::array<int, sizeof...(args)> filter{args...};
-        return std::equal(filter.begin(), filter.end(), digits.begin());
+        return std::equal(filter.begin(), filter.end(),
+                          digits.begin(), std::next(digits.begin(), std::min(digits.size(), filter.size())));
     }
 
     bool isMatchAny(int digit) const {
         return std::any_of(digits.begin(), digits.end(), [digit](const auto d) { return d == digit; });
     }
 
-
 private:
-    std::array<int, 4> digits;
+    static const size_t digitsInIp = 4;
+    std::array<int, digitsInIp> digits;
 };
 
 bool operator==(const ipAddress &lhs, const ipAddress &rhs) {
