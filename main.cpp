@@ -3,6 +3,8 @@
 #include <forward_list>
 #include <cstdint>
 #include <limits>
+#include <list>
+#include <vector>
 
 /*
 Далее идет рабочее и эффективное решение. К сожалению:
@@ -67,10 +69,17 @@ typename std::enable_if<std::is_integral<T>::value, std::string>::type print(T v
     return ss.str();
 }
 
+template<typename T>
+std::basic_string<T> print(std::basic_string<T> value) {
+    return value;
+}
+
 int main() {
     std::cout << print(char(-1)) << std::endl;
     std::cout << print(short(0)) << std::endl;
     std::cout << print(int(2130706433)) << std::endl;
     std::cout << print(long(8875824491850138409)) << std::endl;
+    std::cout << print(std::string("127.0.0.2")) << std::endl;
+
     return 0;
 }
