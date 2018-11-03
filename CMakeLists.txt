@@ -3,4 +3,4 @@ project(print_ip)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(print_ip main.cpp)
+add_executable(print_ip main.cpp int.h string.h container.h)

@@ -1,0 +1,28 @@
+#pragma once
+
+#include <type_traits>
+#include <stack>
+#include <sstream>
+#include <limits>
+
+template<typename T>
+typename std::enable_if<std::is_integral<T>::value, std::string>::type print(T value) {
+    std::stack<uint8_t> bytes;
+    const int divider = std::numeric_limits<uint8_t>::max() + 1;
+    for (int i = 0; i < sizeof(T); ++i) {
+        bytes.emplace(value % divider);
+        value /= divider;
+    }
+    std::ostringstream ss;
+    bool first = true;
+    while (!bytes.empty()) {
+        if (first) {
+            first = false;
+        } else {
+            ss << ".";
+        }
+        ss << static_cast<int>(bytes.top());
+        bytes.pop();
+    }
+    return ss.str();
+}
