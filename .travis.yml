@@ -1,3 +1,8 @@
+addons:
+  apt:
+    packages:
+      - doxygen
+      - graphviz
 language: cpp
 compiler: gcc
 dist: trusty
@@ -16,6 +21,7 @@ script:
 - cmake .
 - cmake --build .
 - cmake --build . --target package
+- doxygen
 
 deploy:
 - provider: script
@@ -27,5 +33,6 @@ deploy:
   skip-cleanup: true
   github-token: $GITHUB_TOKEN
   keep-history: true
+  local-dir: html
   on:
     branch: master
