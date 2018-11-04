@@ -8,7 +8,7 @@ endif ($ENV{TRAVIS_BUILD_NUMBER})
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(print_ip main.cpp int_traits.h string_traits.h container_traits.h tuple_traits.h all_same_traits.h)
+add_executable(print_ip src/main.cpp src/int_traits.h src/string_traits.h src/container_traits.h src/tuple_traits.h src/all_same_traits.h)
 
 set_target_properties(print_ip PROPERTIES
         CXX_STANDARD 14

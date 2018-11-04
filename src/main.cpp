@@ -9,7 +9,7 @@
 #include "tuple_traits.h"
 
 
-
+/// Точка входа в программу
 int main() {
     std::cout << print(char(-1)) << std::endl;
     std::cout << print(short(0)) << std::endl;

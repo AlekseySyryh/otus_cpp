@@ -4,15 +4,17 @@
 #include <vector>
 #include <sstream>
 
+/// \brief Базовая реализация метафункции проверки на принадлежность контейнеру
+/// \details Если не указано иное то это не контейнер
 template<typename T>
 struct is_container {
     static constexpr bool value = false;
 };
 
-//Тоже обобщим... Нам нужно что-то у чего есть константый итератор и два параметра...
-//tuple сюда не попадет т.к. не имеет итератора (даже если параметров два)
-//basic_string - не попадет из-за трех параметров.
-//P.S. Что курил такую проверку константного итератора? Как это вообще можно придумать???
+
+/// \brief Частичная реализация метафункции проверки на принадлежность контейнеру, для случая шаблона с двумя параметрами
+/// \details Если у типа есть константный итератор - это контейнер, иначе - нет.
+
 template<template<class, class> class Container, class Val, class Alloc>
 struct is_container<Container<Val, Alloc>> {
 private:
@@ -26,6 +28,7 @@ public:
     static const bool value = sizeof(test<Container<Val, Alloc>>(0)) == sizeof(uint8_t);
 };
 
+/// Частичная реализация функции print для контейнеров одним типом значения и константными итераторами (кроме строк)
 template<typename T>
 typename std::enable_if<is_container<T>::value, std::string>::type print(T value) {
     std::ostringstream ss;
