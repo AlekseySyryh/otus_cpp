@@ -9,7 +9,7 @@ template<typename T>
 typename std::enable_if<std::is_integral<T>::value, std::string>::type print(T value) {
     std::stack<uint8_t> bytes;
     const int divider = std::numeric_limits<uint8_t>::max() + 1;
-    for (int i = 0; i < sizeof(T); ++i) {
+    for (size_t i = 0; i < sizeof(T); ++i) {
         bytes.emplace(value % divider);
         value /= divider;
     }

@@ -19,22 +19,20 @@ struct is_tuple<std::tuple<Args...>> {
 
 template<typename T, size_t max = std::tuple_size<T>::value, size_t ix = 0>
 struct print_tuple {
-#pragma clang diagnostic push
-#pragma ide diagnostic ignored "InfiniteRecursion"
     static void print(std::ostringstream &ss, bool first, const T &tuple) {
         if (!first) {
             ss << ".";
         }
         ss << std::get<ix>(tuple);
         print_tuple<T, max, ix + 1>::print(ss, false, tuple);
-#pragma clang diagnostic pop
-
     }
 };
 
 template<typename T, size_t ix>
 struct print_tuple<T, ix, ix> {
-    static void print(std::ostringstream &ss, bool first, const T &tuple) {
+    static void print(__attribute__((unused)) std::ostringstream &ss,
+                      __attribute__((unused)) bool first,
+                      __attribute__((unused)) const T &tuple) {
     }
 };
 
