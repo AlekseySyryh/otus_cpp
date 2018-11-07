@@ -6,7 +6,7 @@ else ($ENV{TRAVIS_BUILD_NUMBER})
     project(matrix)
 endif ($ENV{TRAVIS_BUILD_NUMBER})
 
-add_executable(matrix main.cpp)
+add_executable(matrix main.cpp matrix.h)
 
 
 add_executable(test_main tests.cpp)
