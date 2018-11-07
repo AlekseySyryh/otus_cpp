@@ -44,4 +44,6 @@ include(CPack)
 
 enable_testing()
 
-add_test(tests test_main)
+add_test(D1 test_main)
+add_test(D2 test_main)
+add_test(D3 test_main)

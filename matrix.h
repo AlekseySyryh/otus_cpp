@@ -2,9 +2,46 @@
 
 #include <map>
 #include <memory>
+#include <numeric>
 
 template<class T, T def, size_t dims = 2>
 class Matrix {
+public:
+    size_t size() const {
+        return std::accumulate(
+                data.begin(),
+                data.end(),
+                0,
+                [](const auto &lhs, const auto &rhs) {
+                    return rhs.second.size() + lhs;
+                });
+    }
+
+    template<typename ...Args>
+    T get(size_t dim, Args... args) {
+        static_assert(sizeof...(Args) == dims - 1, "Wrong number of params");
+        if (data.count(dim) == 1) {
+            return data[dim].get(args...);
+        } else {
+            return def;
+        }
+    }
+
+    template<typename ...Args>
+    void set(size_t dim, Args... args) {
+        static_assert(sizeof...(Args) == dims, "Wrong number of params");
+        data[dim].set(args...);
+        if (data[dim].size() == 0) {
+            data.erase(dim);
+        }
+    }
+
+    Matrix<T, def, dims - 1> &operator[](size_t ix) {
+        return data[ix];
+    }
+
+private:
+    std::map<size_t, Matrix<T, def, dims - 1>> data;
 };
 
 template<class T, T def>
@@ -31,7 +68,7 @@ private:
 template<class T, T def>
 class Matrix<T, def, 1> {
 public:
-    size_t size() {
+    size_t size() const {
         return data.size();
     }
 
