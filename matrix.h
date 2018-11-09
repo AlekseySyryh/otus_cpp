@@ -3,6 +3,60 @@
 #include <map>
 #include <memory>
 #include <numeric>
+#include <tuple>
+#include <iostream>
+#include <vector>
+
+template<typename T>
+class MatrixIterator {
+public:
+    MatrixIterator() = default;
+
+    MatrixIterator(T current, T end) : current(current), end(end) {
+        if (current != end) {
+            child = current->second.begin();
+        }
+    }
+
+    void operator++() {
+        if (child != current->second.end()) {
+            ++child;
+        }
+        if (child == current->second.end()) {
+            ++current;
+            if (current != end) {
+                child = current->second.begin();
+            }
+        }
+    }
+
+    MatrixIterator<T> &operator=(const MatrixIterator<T> &other) {
+        current = other.current;
+        child = other.child;
+        end = other.end;
+        return *this;
+    }
+
+    auto operator*() const {
+        return std::tuple_cat(
+                std::make_tuple(current->first),
+                *child);
+    }
+
+    bool operator==(const MatrixIterator<T> &rhs) const {
+        return (current == rhs.current) &&
+               ((child == rhs.child) || (current == end));
+    }
+
+    bool operator!=(const MatrixIterator<T> &rhs) const {
+        return !(*this == rhs);
+    }
+
+private:
+    T current;
+    decltype(current->second.begin()) child;
+    T end;
+};
 
 template<class T, T def, size_t dims = 2>
 class Matrix {
@@ -40,6 +94,24 @@ public:
         return data[ix];
     }
 
+    using iterator = MatrixIterator<typename std::map<size_t, Matrix<T, def, dims - 1>>::iterator>;
+
+    iterator begin() {
+        std::vector<size_t> ixes;
+        for (const auto &ix : data) {
+            if (ix.second.size() == 0) {
+                ixes.push_back(ix.first);
+            }
+        }
+        for (const auto &ix : ixes) {
+            data.erase(ix);
+        }
+        return iterator(data.begin(), data.end());
+    }
+
+    iterator end() {
+        return iterator(data.end(), data.end());
+    }
 private:
     std::map<size_t, Matrix<T, def, dims - 1>> data;
 };
@@ -92,12 +164,14 @@ public:
         }
     }
 
-    auto begin() const {
-        return data.cbegin();
+    using iterator = typename std::map<size_t, T>::iterator;
+
+    iterator begin() {
+        return data.begin();
     }
 
-    auto end() const {
-        return data.cend();
+    iterator end() {
+        return data.end();
     }
 private:
     std::map<size_t, T> data;

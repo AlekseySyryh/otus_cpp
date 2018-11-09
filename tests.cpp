@@ -141,6 +141,27 @@ BOOST_AUTO_TEST_SUITE(D2)
         BOOST_CHECK(matrix.size() == 0);
     }
 
+    BOOST_AUTO_TEST_CASE(IteratorWorking) {
+        Matrix<int, -1> matrix;
+        matrix[0][0] = 0;
+        matrix[1][1] = 1;
+        matrix[2][2] = 2;
+        matrix[3][3] = -1;
+        std::vector<std::tuple<size_t, size_t, int>> results;
+        for (const auto &a : matrix) {
+            results.push_back(a);
+        }
+        BOOST_CHECK(results.size() == 3);
+        BOOST_CHECK(
+                std::find(results.begin(), results.end(), std::tuple<size_t, size_t, int>(0, 0, 0)) != results.end());
+        BOOST_CHECK(
+                std::find(results.begin(), results.end(), std::tuple<size_t, size_t, int>(1, 1, 1)) != results.end());
+        BOOST_CHECK(
+                std::find(results.begin(), results.end(), std::tuple<size_t, size_t, int>(2, 2, 2)) != results.end());
+        BOOST_CHECK(
+                std::find(results.begin(), results.end(), std::tuple<size_t, size_t, int>(3, 3, -1)) == results.end());
+    }
+
 
 BOOST_AUTO_TEST_SUITE_END()
 
@@ -204,4 +225,24 @@ BOOST_AUTO_TEST_SUITE(D3)
         BOOST_CHECK(matrix.size() == 0);
     }
 
+    BOOST_AUTO_TEST_CASE(IteratorWorking) {
+        Matrix<int, -1, 3> matrix;
+        matrix[0][0][0] = 0;
+        matrix[1][1][1] = 1;
+        matrix[2][2][2] = 2;
+        matrix[3][3][3] = -1;
+        std::vector<std::tuple<size_t, size_t, size_t, int>> results;
+        for (const auto &a : matrix) {
+            results.push_back(a);
+        }
+        BOOST_CHECK(results.size() == 3);
+        BOOST_CHECK(std::find(results.begin(), results.end(), std::tuple<size_t, size_t, size_t, int>(0, 0, 0, 0)) !=
+                    results.end());
+        BOOST_CHECK(std::find(results.begin(), results.end(), std::tuple<size_t, size_t, size_t, int>(1, 1, 1, 1)) !=
+                    results.end());
+        BOOST_CHECK(std::find(results.begin(), results.end(), std::tuple<size_t, size_t, size_t, int>(2, 2, 2, 2)) !=
+                    results.end());
+        BOOST_CHECK(std::find(results.begin(), results.end(), std::tuple<size_t, size_t, size_t, int>(3, 3, 3, -1)) ==
+                    results.end());
+    }
 BOOST_AUTO_TEST_SUITE_END()
