@@ -61,6 +61,12 @@ private:
 template<class T, T def, size_t dims = 2>
 class Matrix {
 public:
+    Matrix() : parent(nullptr) {}
+
+    Matrix(Matrix<T, def, dims + 1> *parent, size_t ix) : parent(parent), ix(ix) {
+
+    }
+
     size_t size() const {
         return std::accumulate(
                 data.begin(),
@@ -74,6 +80,7 @@ public:
     template<typename ...Args>
     T get(size_t dim, Args... args) {
         static_assert(sizeof...(Args) == dims - 1, "Wrong number of params");
+        //todo Проверка параметров
         if (data.count(dim) == 1) {
             return data[dim].get(args...);
         } else {
@@ -84,36 +91,46 @@ public:
     template<typename ...Args>
     void set(size_t dim, Args... args) {
         static_assert(sizeof...(Args) == dims, "Wrong number of params");
+        //todo Проверка параметров
         data[dim].set(args...);
         if (data[dim].size() == 0) {
             data.erase(dim);
+            deleteIfNoLongerRequired();
         }
     }
 
     Matrix<T, def, dims - 1> &operator[](size_t ix) {
+        if (data.count(ix) == 0) {
+            data[ix] = Matrix<T, def, dims - 1>(this, ix);
+        }
         return data[ix];
     }
 
     using iterator = MatrixIterator<typename std::map<size_t, Matrix<T, def, dims - 1>>::iterator>;
 
     iterator begin() {
-        std::vector<size_t> ixes;
-        for (const auto &ix : data) {
-            if (ix.second.size() == 0) {
-                ixes.push_back(ix.first);
-            }
-        }
-        for (const auto &ix : ixes) {
-            data.erase(ix);
-        }
         return iterator(data.begin(), data.end());
     }
 
     iterator end() {
         return iterator(data.end(), data.end());
     }
+
+    void delRow(size_t ix) {
+        data.erase(ix);
+        deleteIfNoLongerRequired();
+    }
 private:
     std::map<size_t, Matrix<T, def, dims - 1>> data;
+    Matrix<T, def, 3> *parent;
+    size_t ix;
+
+    void deleteIfNoLongerRequired() {
+        if (data.size() == 0 &&
+            parent != nullptr) {
+            parent->delRow(ix);
+        }
+    }
 };
 
 template<class T, T def>
@@ -136,10 +153,14 @@ private:
     size_t ix;
 };
 
-
 template<class T, T def>
 class Matrix<T, def, 1> {
 public:
+    Matrix() : parent(nullptr) {}
+
+    Matrix(Matrix<T, def, 2> *parent, size_t ix) : parent(parent), ix(ix) {
+
+    }
     size_t size() const {
         return data.size();
     }
@@ -153,6 +174,10 @@ public:
             data[ix] = val;
         } else {
             data.erase(ix);
+            if (data.size() == 0 &&
+                parent != nullptr) {
+                parent->delRow(ix);
+            }
         }
     }
 
@@ -175,5 +200,7 @@ public:
     }
 private:
     std::map<size_t, T> data;
+    Matrix<T, def, 2> *parent;
+    size_t ix;
 };
 
