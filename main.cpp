@@ -1,15 +1,33 @@
 #include <iostream>
+#include <iomanip>
 #include "matrix.h"
-/// Точка входа в программу
+
+
 int main() {
-    Matrix<int, -1, 3> matrix;
-    matrix[0][0][0] = 0;
-    matrix[1][1][1] = 1;
-    matrix[2][2][2] = 2;
-    matrix[3][3][3] = -1;
-    for (auto a: matrix) {
-        std::cout << std::get<0>(a) << " " << std::get<1>(a) << " " << std::get<2>(a) << " " << std::get<3>(a)
-                  << std::endl;
+    Matrix<int, 0> matrix;
+    for (int i = 0; i < 10; ++i) {
+        matrix[i][i] = i;
+    }
+    for (int i = 0; i < 10; ++i) {
+        matrix[i][9 - i] = 9 - i;
+    }
+    std::cout << "Фрагмент от [1,1] до [8,8]" << std::endl;
+    for (int i = 1; i < 9; ++i) {
+        for (int j = 1; j < 9; ++j) {
+            std::cout << matrix[i][j] << " ";
+        }
+        std::cout << std::endl;
+    }
+    std::cout << std::endl << "Занято ячеек: " << matrix.size() << std::endl;
+    std::cout << "Занятые ячейки:" << std::endl <<
+              std::setw(10) << std::left << "X" <<
+              std::setw(10) << std::left << "Y" <<
+              "Значение" << std::endl;
+    for (const auto cell : matrix) {
+        size_t x, y;
+        int val;
+        std::tie(x, y, val) = cell;
+        std::cout << std::setw(10) << std::left << x << std::setw(10) << std::left << y << val << std::endl;
     }
     return 0;
 }

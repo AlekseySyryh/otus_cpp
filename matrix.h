@@ -4,59 +4,10 @@
 #include <memory>
 #include <numeric>
 #include <tuple>
-#include <iostream>
+#include <ostream>
 #include <vector>
+#include "matrix_iterator.h"
 
-template<typename T>
-class MatrixIterator {
-public:
-    MatrixIterator() = default;
-
-    MatrixIterator(T current, T end) : current(current), end(end) {
-        if (current != end) {
-            child = current->second.begin();
-        }
-    }
-
-    void operator++() {
-        if (child != current->second.end()) {
-            ++child;
-        }
-        if (child == current->second.end()) {
-            ++current;
-            if (current != end) {
-                child = current->second.begin();
-            }
-        }
-    }
-
-    MatrixIterator<T> &operator=(const MatrixIterator<T> &other) {
-        current = other.current;
-        child = other.child;
-        end = other.end;
-        return *this;
-    }
-
-    auto operator*() const {
-        return std::tuple_cat(
-                std::make_tuple(current->first),
-                *child);
-    }
-
-    bool operator==(const MatrixIterator<T> &rhs) const {
-        return (current == rhs.current) &&
-               ((child == rhs.child) || (current == end));
-    }
-
-    bool operator!=(const MatrixIterator<T> &rhs) const {
-        return !(*this == rhs);
-    }
-
-private:
-    T current;
-    decltype(current->second.begin()) child;
-    T end;
-};
 
 template<class T, T def, size_t dims = 2>
 class Matrix {
@@ -80,7 +31,6 @@ public:
     template<typename ...Args>
     T get(size_t dim, Args... args) {
         static_assert(sizeof...(Args) == dims - 1, "Wrong number of params");
-        //todo Проверка параметров
         if (data.count(dim) == 1) {
             return data[dim].get(args...);
         } else {
@@ -91,7 +41,6 @@ public:
     template<typename ...Args>
     void set(size_t dim, Args... args) {
         static_assert(sizeof...(Args) == dims, "Wrong number of params");
-        //todo Проверка параметров
         data[dim].set(args...);
         if (data[dim].size() == 0) {
             data.erase(dim);
@@ -148,10 +97,20 @@ struct MatrixRec {
         return *this;
     }
 
+    T get() {
+        return parent.get(ix);
+    }
 private:
     Matrix<T, def, 1> &parent;
     size_t ix;
 };
+
+template<class T, T def>
+std::ostream &operator<<(std::ostream &str, MatrixRec<T, def> &&rec) {
+    str << rec.get();
+    return str;
+}
+
 
 template<class T, T def>
 class Matrix<T, def, 1> {
