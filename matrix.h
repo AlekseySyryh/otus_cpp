@@ -71,7 +71,7 @@ public:
     }
 private:
     std::map<size_t, Matrix<T, def, dims - 1>> data;
-    Matrix<T, def, 3> *parent;
+    Matrix<T, def, dims + 1> *parent;
     size_t ix;
 
     void deleteIfNoLongerRequired() {
