@@ -26,6 +26,6 @@ struct is_string<const char *> {
 
 /// Частичная реализация функции print для строк
 template<typename T>
-typename std::enable_if<is_string<T>::value, std::string>::type print(T value) {
+typename std::enable_if_t<is_string<T>::value, std::string> print(T value) {
     return value;
 }

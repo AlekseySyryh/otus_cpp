@@ -44,7 +44,7 @@ struct print_tuple<T, ix, ix> {
 
 /// Частичная реализация функции print для кортежей с общим типом
 template<typename T>
-typename std::enable_if<is_sametype_tuple<T>::value, std::string>::type print(T value) {
+typename std::enable_if_t<is_sametype_tuple<T>::value, std::string> print(T value) {
     std::ostringstream ss;
     print_tuple<T>::print(ss, true, value);
     return ss.str();
