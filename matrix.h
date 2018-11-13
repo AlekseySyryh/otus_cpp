@@ -8,13 +8,16 @@
 #include <vector>
 #include "matrix_iterator.h"
 
+struct IMatrix {
+    virtual void delRow(size_t) = 0;
+};
 
 template<class T, T def, size_t dims = 2>
-class Matrix {
+class Matrix : IMatrix {
 public:
     Matrix() : parent(nullptr) {}
 
-    Matrix(Matrix<T, def, dims + 1> *parent, size_t ix) : parent(parent), ix(ix) {
+    Matrix(IMatrix *parent, size_t ix) : parent(parent), ix(ix) {
 
     }
 
@@ -71,7 +74,7 @@ public:
     }
 private:
     std::map<size_t, Matrix<T, def, dims - 1>> data;
-    Matrix<T, def, dims + 1> *parent;
+    IMatrix *parent;
     size_t ix;
 
     void deleteIfNoLongerRequired() {
@@ -117,7 +120,7 @@ class Matrix<T, def, 1> {
 public:
     Matrix() : parent(nullptr) {}
 
-    Matrix(Matrix<T, def, 2> *parent, size_t ix) : parent(parent), ix(ix) {
+    Matrix(IMatrix *parent, size_t ix) : parent(parent), ix(ix) {
 
     }
     size_t size() const {
@@ -159,7 +162,7 @@ public:
     }
 private:
     std::map<size_t, T> data;
-    Matrix<T, def, 2> *parent;
+    IMatrix *parent;
     size_t ix;
 };
 
