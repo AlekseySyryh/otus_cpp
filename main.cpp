@@ -20,7 +20,7 @@ template<typename Container>
 auto fillContainer(int elements) {
     Container container;
     for (int i = 0; i < elements; ++i) {
-        container.add(i);
+        container.emplace(i);
     }
     return container;
 }
@@ -41,11 +41,13 @@ int main() {
     for (const auto &rec : container2) {
         std::cout << rec << std::endl;
     }
+
     std::cout << std::endl;
     container<int, myAllocator<container_element<int>, 10>> container3(container1);
     for (const auto &rec : container3) {
         std::cout << rec << std::endl;
     }
+
     std::cout << std::endl;
     container<int> container4(std::move(container2));
     for (const auto &rec : container4) {

@@ -72,19 +72,6 @@ public:
         }
     }
 
-    void add(const T &value) {
-        container_element<T> *old_first = first;
-        first = allocator.allocate(1);
-        allocator.construct(first, value, old_first);
-    }
-
-    void add(T &&value) {
-        container_element<T> *old_first = first;
-        first = allocator.allocate(1);
-        allocator.construct(first, value, old_first);
-    }
-
-
     template<typename ...Args>
     void emplace(Args &&...args) {
         container_element<T> *old_first = first;
