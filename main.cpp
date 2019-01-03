@@ -26,7 +26,6 @@ auto fillContainer(int elements) {
 }
 
 int main() {
-
     auto map1 = fillMap<std::map<int, int>>(10);
 
     std::cout << std::endl;
