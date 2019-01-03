@@ -9,7 +9,10 @@
 #include "observers.h"
 #include "console_observer.h"
 #include "file_observer.h"
+#include "block_builder.h"
 #include "block_processor.h"
+#include "fixed_block.h"
+#include "dynamic_block.h"
 
 int main(int argc, char *argv[]) {
     if (argc != 2) {

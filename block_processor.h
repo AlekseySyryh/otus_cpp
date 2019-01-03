@@ -2,6 +2,7 @@
 
 #include "block_builder.h"
 
+
 class BlockProcessor {
 public:
     BlockProcessor(std::shared_ptr<NotifyReceivers> notifyReceivers,

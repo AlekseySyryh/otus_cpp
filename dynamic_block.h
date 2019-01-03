@@ -6,7 +6,7 @@
 class DynamicBlock : public Block {
 public:
     DynamicBlock(std::shared_ptr<BlockBuilder> blockBuilder) :
-            blockBuilder(blockBuilder), openedBrackets(1) {
+            openedBrackets(1), blockBuilder(blockBuilder) {
     }
 
 protected:
