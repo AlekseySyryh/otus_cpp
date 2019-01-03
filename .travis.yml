@@ -15,6 +15,7 @@ install:
 script:
   - cmake .
   - cmake --build .
+  - cmake --build . --target package
 deploy:
   provider: script
   skip_cleanup: true
