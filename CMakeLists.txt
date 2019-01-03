@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.2)
 if ($ENV{TRAVIS_BUILD_NUMBER})
     project(bulk VERSION 0.0.$ENV{TRAVIS_BUILD_NUMBER})
 else ($ENV{TRAVIS_BUILD_NUMBER})
-    project(bulk)
+    project(bulk VERSION 0.0.1)
 endif ($ENV{TRAVIS_BUILD_NUMBER})
 
 set(CMAKE_CXX_STANDARD 14)
