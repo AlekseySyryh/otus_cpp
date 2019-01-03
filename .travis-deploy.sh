@@ -2,7 +2,7 @@
 curl \
    -T bulk-0.0.$TRAVIS_BUILD_NUMBER-Linux.deb \
    -ualekseysyryh:$BINTRAY_API_KEY \
-   "https://api.bintray.com/content/alekseysyryh/otus-cpp/homework/$TRAVIS_BUILD_NUMBER/bulk-0.0.$TRAVIS_BUILD_NUMBER-Linux.deb;deb_distribution=trusty;deb_component=main;deb_architecture=amd64"
+   "https://api.bintray.com/content/alekseysyryh/otus-cpp/homework/$TRAVIS_BUILD_NUMBER/bulk-0.0.$TRAVIS_BUILD_NUMBER-Linux.deb;deb_distribution=trusty;deb_component=main;deb_architecture=amd64;publish=1"
 
 body='{
 "request": {
