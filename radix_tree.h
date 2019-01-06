@@ -2,6 +2,7 @@
 
 #include <vector>
 #include "node.h"
+#include <iostream>
 
 class RadixTree {
 public:

@@ -9,12 +9,10 @@
 
 int main() {
     RadixTree rt;
-    rt.add("aleksey");
-    rt.add("sasha");
-    rt.add("aleks");
-    rt.add("alek");
-    rt.add("alesha");
-    rt.add("maksim");
+    std::string line;
+    while (std::getline(std::cin, line)) {
+        rt.add(line);
+    }
     for (auto &row : rt.enumerate()) {
         std::cout << row.first << " " << row.second << std::endl;
     }

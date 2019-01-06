@@ -43,6 +43,7 @@ public:
 
         if (labelDiff != label.end()) {
             auto newNode = std::make_unique<node>(std::wstring(labelDiff, label.cend()));
+            newNode->is_end = is_end;
             for (auto &childRec : childs) {
                 newNode->childs[childRec.first] = std::move(childRec.second);
             }
