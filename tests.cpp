@@ -13,7 +13,7 @@ BOOST_AUTO_TEST_SUITE(tests_add)
 
     BOOST_AUTO_TEST_CASE(Step1) {
         RadixTree rt;
-        rt.Add("aleksey");
+        rt.add("aleksey");
         BOOST_CHECK(rt.getRoot());
         BOOST_CHECK(rt.getRoot()->getLabel() == L"aleksey");
         BOOST_CHECK(rt.getRoot()->getIsEnd());
@@ -21,8 +21,8 @@ BOOST_AUTO_TEST_SUITE(tests_add)
 
     BOOST_AUTO_TEST_CASE(Step2) {
         RadixTree rt;
-        rt.Add("aleksey");
-        rt.Add("sasha");
+        rt.add("aleksey");
+        rt.add("sasha");
         BOOST_CHECK(rt.getRoot());
         BOOST_CHECK(rt.getRoot()->getLabel() == L"");
         BOOST_CHECK(!rt.getRoot()->getIsEnd());
@@ -34,9 +34,9 @@ BOOST_AUTO_TEST_SUITE(tests_add)
 
     BOOST_AUTO_TEST_CASE(Step3) {
         RadixTree rt;
-        rt.Add("aleksey");
-        rt.Add("sasha");
-        rt.Add("aleks");
+        rt.add("aleksey");
+        rt.add("sasha");
+        rt.add("aleks");
         BOOST_CHECK(rt.getRoot());
         BOOST_CHECK(rt.getRoot()->getLabel() == L"");
         BOOST_CHECK(!rt.getRoot()->getIsEnd());
@@ -50,10 +50,10 @@ BOOST_AUTO_TEST_SUITE(tests_add)
 
     BOOST_AUTO_TEST_CASE(Step4) {
         RadixTree rt;
-        rt.Add("aleksey");
-        rt.Add("sasha");
-        rt.Add("aleks");
-        rt.Add("alek");
+        rt.add("aleksey");
+        rt.add("sasha");
+        rt.add("aleks");
+        rt.add("alek");
         BOOST_CHECK(rt.getRoot());
         BOOST_CHECK(rt.getRoot()->getLabel() == L"");
         BOOST_CHECK(!rt.getRoot()->getIsEnd());
@@ -69,11 +69,11 @@ BOOST_AUTO_TEST_SUITE(tests_add)
 
     BOOST_AUTO_TEST_CASE(Step5) {
         RadixTree rt;
-        rt.Add("aleksey");
-        rt.Add("sasha");
-        rt.Add("aleks");
-        rt.Add("alek");
-        rt.Add("alesha");
+        rt.add("aleksey");
+        rt.add("sasha");
+        rt.add("aleks");
+        rt.add("alek");
+        rt.add("alesha");
         BOOST_CHECK(rt.getRoot());
         BOOST_CHECK(rt.getRoot()->getLabel() == L"");
         BOOST_CHECK(!rt.getRoot()->getIsEnd());
@@ -93,12 +93,12 @@ BOOST_AUTO_TEST_SUITE(tests_add)
 
     BOOST_AUTO_TEST_CASE(Step6) {
         RadixTree rt;
-        rt.Add("aleksey");
-        rt.Add("sasha");
-        rt.Add("aleks");
-        rt.Add("alek");
-        rt.Add("alesha");
-        rt.Add("maksim");
+        rt.add("aleksey");
+        rt.add("sasha");
+        rt.add("aleks");
+        rt.add("alek");
+        rt.add("alesha");
+        rt.add("maksim");
         BOOST_CHECK(rt.getRoot());
         BOOST_CHECK(rt.getRoot()->getLabel() == L"");
         BOOST_CHECK(!rt.getRoot()->getIsEnd());
@@ -124,7 +124,7 @@ BOOST_AUTO_TEST_SUITE(tests_utf8)
 
     BOOST_AUTO_TEST_CASE(UTF8CanBeAdded) {
         RadixTree rt;
-        rt.Add("ыы");
+        rt.add("ыы");
         BOOST_CHECK(rt.getRoot());
         BOOST_CHECK(rt.getRoot()->getLabel() == L"ыы");
         BOOST_CHECK(rt.getRoot()->getLabel().size() == 2);
@@ -133,8 +133,8 @@ BOOST_AUTO_TEST_SUITE(tests_utf8)
 
     BOOST_AUTO_TEST_CASE(UTF8SplitOk) {
         RadixTree rt;
-        rt.Add("ыы");
-        rt.Add("ый");
+        rt.add("ыы");
+        rt.add("ый");
         BOOST_CHECK(rt.getRoot());
         BOOST_CHECK(rt.getRoot()->getLabel() == L"ы");
         BOOST_CHECK(rt.getRoot()->getLabel().size() == 1);
@@ -145,7 +145,7 @@ BOOST_AUTO_TEST_SUITE(tests_utf8)
 
     BOOST_AUTO_TEST_CASE(LabelAsUTF8) {
         RadixTree rt;
-        rt.Add("ыы");
+        rt.add("ыы");
         BOOST_CHECK(rt.getRoot());
         BOOST_CHECK(rt.getRoot()->getLabelAsString() == "ыы");
     }
@@ -156,12 +156,12 @@ BOOST_AUTO_TEST_SUITE(tests_enumerate)
 
     BOOST_AUTO_TEST_CASE(Enumerate) {
         RadixTree rt;
-        rt.Add("aleksey");
-        rt.Add("sasha");
-        rt.Add("aleks");
-        rt.Add("alek");
-        rt.Add("alesha");
-        rt.Add("maksim");
+        rt.add("aleksey");
+        rt.add("sasha");
+        rt.add("aleks");
+        rt.add("alek");
+        rt.add("alesha");
+        rt.add("maksim");
         std::vector<std::pair<std::string, std::string>> result = rt.enumerate();
         std::sort(result.begin(), result.end());
         BOOST_CHECK(result.size() == 6);
@@ -181,9 +181,9 @@ BOOST_AUTO_TEST_SUITE(tests_enumerate)
 
     BOOST_AUTO_TEST_CASE(EnumerateUTF) {
         RadixTree rt;
-        rt.Add("ы");
-        rt.Add("ыыы");
-        rt.Add("ыйй");
+        rt.add("ы");
+        rt.add("ыыы");
+        rt.add("ыйй");
         std::vector<std::pair<std::string, std::string>> result = rt.enumerate();
         std::sort(result.begin(), result.end());
         BOOST_CHECK(result.size() == 3);

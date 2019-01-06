@@ -9,9 +9,15 @@
 
 int main() {
     RadixTree rt;
-    rt.Add("aleksey");
-    rt.Add("sasha");
-    //auto zzz = std::mismatch(w1.begin(),w1.end(),w2.begin(),w2.end());
-
+    rt.add("aleksey");
+    rt.add("sasha");
+    rt.add("aleks");
+    rt.add("alek");
+    rt.add("alesha");
+    rt.add("maksim");
+    for (auto &row : rt.enumerate()) {
+        std::cout << row.first << " " << row.second << std::endl;
+    }
+    rt.print();
     return 0;
 }
