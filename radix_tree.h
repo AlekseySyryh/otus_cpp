@@ -27,23 +27,22 @@ public:
 
     void print() const {
         if (root) {
-            printNode(*root, 0);
+            printNode(*root, "", true);
         }
     }
 private:
     std::unique_ptr<node> root;
 
-    void printNode(const node &node, int level) const {
-        for (int i = 0; i < level; ++i) {
-            std::cout << "  ";
-        }
-        std::cout << node.getLabelAsString();
+    void printNode(const node &node, const std::string &prefix, bool isLast) const {
+        std::cout << prefix << "+ \"" << node.getLabelAsString() << "\"";
         if (node.getIsEnd()) {
             std::cout << "$";
         }
         std::cout << std::endl;
+        size_t remain = node.getChilds().size();
         for (auto &child : node.getChilds()) {
-            printNode(*child.second, level + 1);
+            --remain;
+            printNode(*child.second, prefix + (isLast ? "  " : "| "), remain == 0);
         }
     }
     void enumerateNode(const node &node, const std::string &prefix,
