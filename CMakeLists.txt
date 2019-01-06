@@ -1,5 +1,10 @@
-cmake_minimum_required(VERSION 3.13)
-project(nickname)
+cmake_minimum_required(VERSION 3.2)
+
+if ($ENV{TRAVIS_BUILD_NUMBER})
+    project(nickname VERSION 0.0.$ENV{TRAVIS_BUILD_NUMBER})
+else ($ENV{TRAVIS_BUILD_NUMBER})
+    project(nickname VERSION 0.0.1)
+endif ($ENV{TRAVIS_BUILD_NUMBER})
 
 set(CMAKE_CXX_STANDARD 14)
 
@@ -40,3 +45,4 @@ enable_testing()
 
 add_test(tests_add test_main)
 add_test(tests_utf8 test_main)
+add_test(tests_enumerate test_main)
