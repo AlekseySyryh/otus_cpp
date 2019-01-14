@@ -87,8 +87,8 @@ int main() {
     }
 #endif
     printf("\nTR1\n");
-    hash<std::string> string_hash;
-    std::size_t h = string_hash("Hash me");
+    hash<unsigned char *> string_hash;
+    std::size_t h = string_hash(ibuf);
     std::cout << h;
     boost::crc_32_type result;
     result.process_bytes(ibuf, 12);
