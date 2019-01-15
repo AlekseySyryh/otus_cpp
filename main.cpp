@@ -1,6 +1,7 @@
 #include <cstdio>
 #include "hash_factory.h"
 #include "options.h"
+#include <boost/iostreams/device/file.hpp>
 
 auto getFiles(const options &opt) {
     using namespace boost::container;
@@ -30,6 +31,7 @@ auto getFiles(const options &opt) {
     return files;
 }
 
+
 int main(int argc, const char *argv[]) {
     using namespace boost::container;
     using namespace boost::filesystem;
@@ -49,26 +51,22 @@ int main(int argc, const char *argv[]) {
                         std::cout << p << std::endl;
                     }
     }
-
-    boost::container::vector<unsigned char> buff{1, 2, 3, 4, 5, 6};
-    boost::container::vector<unsigned char> buff2{1, 2, 3, 4, 5, 6};
-    boost::container::vector<unsigned char> buff3{1, 2, 3, 4, 5, 6, 7};
-
-    std::cout << std::endl << opt.algo << std::endl;
-    auto ret = factory.getFunction(opt.algo)(buff);
-    BOOST_FOREACH(int c, ret) {
-                    std::cout << std::hex << c;
+    BOOST_FOREACH(auto &p, files) {
+                    std::cout << p << std::endl;
+                    size_t blocks = (file_size(p) + opt.blocksize - 1) / opt.blocksize;
+                    for (size_t bl = 0; bl < blocks; ++bl) {
+                        std::cout << "Block " << bl + 1 << " of " << blocks << std::endl;
+                        boost::iostreams::file_source in(p.string(), BOOST_IOS::binary);
+                        boost::iostreams::seek(in, bl * opt.blocksize, BOOST_IOS::beg);
+                        vector<unsigned char> buf(opt.blocksize);
+                        in.read(reinterpret_cast<char *>(buf.data()), opt.blocksize);
+                        auto ret = factory.getFunction(opt.algo)(buf);
+                        std::cout << std::hex;
+                        BOOST_FOREACH(int c, ret) {
+                                        std::cout << c;
+                                    }
+                        std::cout << std::dec << std::endl;
+                    }
                 }
-    std::cout << std::endl;
-    ret = factory.getFunction(opt.algo)(buff2);
-    BOOST_FOREACH(int c, ret) {
-                    std::cout << std::hex << c;
-                }
-    std::cout << std::endl;
-    ret = factory.getFunction(opt.algo)(buff3);
-    BOOST_FOREACH(int c, ret) {
-                    std::cout << std::hex << c;
-                }
-
     return EXIT_SUCCESS;
 }
