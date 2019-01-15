@@ -3,6 +3,7 @@
 #include "options.h"
 #include <boost/iostreams/device/file.hpp>
 #include "file_descriptor.h"
+#include <boost/iterator/distance.hpp>
 
 auto getFiles(const options &opt) {
     using namespace boost::container;
@@ -47,25 +48,31 @@ int main(int argc, const char *argv[]) {
         return EXIT_SUCCESS;
     }
     vector<path> files = getFiles(opt);
-    if (opt.debug) {
-        BOOST_FOREACH(auto &p, files) {
-                        std::cout << p << std::endl;
-                    }
-    }
+
     auto hashFunc = factory.getFunction(opt.algo);
 
+    boost::container::multiset<fileDescriptor> fds;
+
     BOOST_FOREACH(auto &p, files) {
-                    std::cout << p << std::endl;
-                    fileDescriptor fd(p, opt, hashFunc);
-                    size_t blocks = fd.getSize();
-                    for (size_t bl = 0; bl < blocks; ++bl) {
-                        std::cout << "Block " << bl + 1 << " of " << blocks << std::endl;
-                        std::cout << std::hex;
-                        BOOST_FOREACH(int c, fd.getBlock(bl)) {
-                                        std::cout << c;
-                                    }
-                        std::cout << std::dec << std::endl;
+                    if (opt.debug) {
+                        std::cout << "Добавляем файл " << p << std::endl;
                     }
+                    fds.emplace(p, opt, hashFunc);
                 }
+
+    auto it = fds.begin();
+    while (it != fds.end()) {
+        auto current = *it;
+        ++it;
+        if (it != fds.end() && *it == current) {
+            std::cout << current.getName() << std::endl;
+            while (it != fds.end() && *it == current) {
+                std::cout << it->getName() << std::endl;
+                ++it;
+            }
+            std::cout << std::endl;
+        }
+    }
+
     return EXIT_SUCCESS;
 }

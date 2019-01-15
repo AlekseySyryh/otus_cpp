@@ -18,7 +18,7 @@ public:
         try {
             fillDescription();
             store(parse_command_line(argc, argv, desc), vm);
-            bool isOk =
+
                     processHelp() &&
                     processScan() &&
                     processExclude() &&
@@ -28,7 +28,7 @@ public:
                     processBlockSize() &&
                     processAlgorithm() &&
                     processDebug();
-            exit_fail = !isOk;
+
         }
         catch (const std::exception &e) {
             std::cerr << e.what() << std::endl;
@@ -71,7 +71,7 @@ private:
                  "Размер блока, которым производится чтения файлов")
                 ("algo", boost::program_options::value<std::__cxx11::string>()->default_value("CRC"),
                  (boost::format("Алгоритм хэширования (возможные значения: %1%)") % algorithms).str().data())
-                ("debug", "Показывать обрабатываемые файлы");
+                ("debug", "Отладочная информация");
     }
 
     boost::filesystem::path checkDir(std::string dir) {
