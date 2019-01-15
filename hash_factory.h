@@ -10,8 +10,8 @@
 
 #include <boost/functional/hash.hpp>
 #include <boost/crc.hpp>
-
 #include <boost/container/vector.hpp>
+#include <boost/container/set.hpp>
 #include <boost/function.hpp>
 #include <boost/unordered_map.hpp>
 #include <boost/foreach.hpp>
@@ -87,7 +87,7 @@ boost::container::vector<unsigned char> getSHA512Hash(boost::container::vector<u
 
 class hashFactory {
 public:
-    hashFactory() {
+    hashFactory() noexcept {
         functions["CRC"] = getCrcHash;
         functions["TR1"] = getTR1Hash;
 #ifdef WITH_OPENSSL
@@ -101,15 +101,14 @@ public:
 #endif
     }
 
-    auto getFunction(std::string &algorythm) {
+    auto getFunction(std::string &algorythm) const {
         return functions.at(algorythm);
     }
 
-    auto getAlgorythms() {
-        boost::container::vector<std::string> keys;
-        keys.reserve(functions.size());
+    auto getAlgoritms() const {
+        boost::container::set<std::string> keys;
         BOOST_FOREACH(auto rec, functions) {
-                        keys.push_back(rec.first);
+                        keys.insert(rec.first);
                     }
         return keys;
     }
@@ -120,3 +119,5 @@ private:
             boost::function<boost::container::vector<unsigned char>(
                     boost::container::vector<unsigned char> &buff)>> functions;
 };
+
+static const hashFactory HashFactory;

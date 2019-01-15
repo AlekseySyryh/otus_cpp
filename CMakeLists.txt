@@ -4,7 +4,7 @@ project(bayan)
 set(CMAKE_CXX_STANDARD 14)
 
 find_package(OpenSSL COMPONENTS Crypto)
-find_package(Boost COMPONENTS filesystem REQUIRED)
+find_package(Boost COMPONENTS filesystem program_options regex REQUIRED)
 
 add_executable(bayan main.cpp)
 
