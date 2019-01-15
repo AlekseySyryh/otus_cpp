@@ -2,6 +2,7 @@
 #include "hash_factory.h"
 #include "options.h"
 #include <boost/iostreams/device/file.hpp>
+#include "file_descriptor.h"
 
 auto getFiles(const options &opt) {
     using namespace boost::container;
@@ -51,18 +52,16 @@ int main(int argc, const char *argv[]) {
                         std::cout << p << std::endl;
                     }
     }
+    auto hashFunc = factory.getFunction(opt.algo);
+
     BOOST_FOREACH(auto &p, files) {
                     std::cout << p << std::endl;
-                    size_t blocks = (file_size(p) + opt.blocksize - 1) / opt.blocksize;
+                    fileDescriptor fd(p, opt, hashFunc);
+                    size_t blocks = fd.getSize();
                     for (size_t bl = 0; bl < blocks; ++bl) {
                         std::cout << "Block " << bl + 1 << " of " << blocks << std::endl;
-                        boost::iostreams::file_source in(p.string(), BOOST_IOS::binary);
-                        boost::iostreams::seek(in, bl * opt.blocksize, BOOST_IOS::beg);
-                        vector<unsigned char> buf(opt.blocksize);
-                        in.read(reinterpret_cast<char *>(buf.data()), opt.blocksize);
-                        auto ret = factory.getFunction(opt.algo)(buf);
                         std::cout << std::hex;
-                        BOOST_FOREACH(int c, ret) {
+                        BOOST_FOREACH(int c, fd.getBlock(bl)) {
                                         std::cout << c;
                                     }
                         std::cout << std::dec << std::endl;

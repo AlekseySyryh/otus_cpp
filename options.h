@@ -12,7 +12,6 @@
 
 static const boost::container::vector<std::string> charsToEscape = {"[", "]", "/", "^", "$", ".", "|", "+", "(", ")",
                                                                     "{", "}"};
-
 class options {
 public:
     options(int argc, const char *argv[]) {
@@ -182,7 +181,7 @@ private:
                             masks.emplace_back(mask, boost::regex::icase);
                         }
         } else {
-            masks.emplace_back("*");
+            masks.emplace_back(".*");
         }
         return true;
     }
