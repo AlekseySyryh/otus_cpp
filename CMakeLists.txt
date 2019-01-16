@@ -6,8 +6,12 @@ else ($ENV{TRAVIS_BUILD_NUMBER})
     project(range VERSION 0.0.999)
 endif ($ENV{TRAVIS_BUILD_NUMBER})
 
-include(conanbuildinfo.cmake)
-conan_basic_setup()
+if(EXISTS ${CMAKE_HOME_DIRECTORY}/conanbuildinfo.cmake)
+    include(conanbuildinfo.cmake)
+    conan_basic_setup(TARGETS)
+else()
+    message(FATAL_ERROR "Conan not installed. Run 'conan install .'")
+endif()
 
 set(CMAKE_CXX_STANDARD 14)
 
@@ -28,9 +32,8 @@ set_target_properties(test_main PROPERTIES
         INCLUDE_DIRECTORIES ${Boost_INCLUDE_DIR}
         )
 
-target_link_libraries(test_main
-        ${Boost_LIBRARIES}
-        )
+target_link_libraries(range CONAN_PKG::range-v3)
+target_link_libraries(test_main CONAN_PKG::range-v3 ${Boost_LIBRARIES})
 
 install(TARGETS range RUNTIME DESTINATION bin)
 
