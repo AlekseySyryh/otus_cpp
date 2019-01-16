@@ -10,15 +10,21 @@
 #include <boost/regex.hpp>
 #include <boost/algorithm/cxx11/any_of.hpp>
 
+
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "cert-err58-cpp"
 static const boost::container::vector<std::string> charsToEscape = {"[", "]", "/", "^", "$", ".", "|", "+", "(", ")",
                                                                     "{", "}"};
+#pragma clang diagnostic pop
+
 class options {
 public:
     options(int argc, const char *argv[]) {
         try {
             fillDescription();
             store(parse_command_line(argc, argv, desc), vm);
-
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-value"
                     processHelp() &&
                     processScan() &&
                     processExclude() &&
@@ -28,6 +34,7 @@ public:
                     processBlockSize() &&
                     processAlgorithm() &&
                     processDebug();
+#pragma clang diagnostic pop
 
         }
         catch (const std::exception &e) {
@@ -45,15 +52,15 @@ public:
     size_t deep = 0;
     size_t minsize = 0;
     boost::container::vector<boost::regex> masks;
-    size_t blocksize = 0;
-    std::string algo;
+    size_t blockSize = 0;
+    std::string algorithm;
     bool debug = false;
 private:
     boost::program_options::options_description desc{"Опции"};
     boost::program_options::variables_map vm;
 
     void fillDescription() {
-        std::string algorithms = boost::algorithm::join(HashFactory.getAlgoritms(), ", ");
+        std::string algorithms = boost::algorithm::join(HashFactory.getAlgorithms(), ", ");
         desc.add_options()
                 ("help,h", "Этот экран")
                 ("scan,s",
@@ -69,7 +76,7 @@ private:
                  "Маски имен файлов разрешенных для сравнения (не зависят от регистра)")
                 ("blocksize", boost::program_options::value<std::__cxx11::string>()->default_value("1K"),
                  "Размер блока, которым производится чтения файлов")
-                ("algo", boost::program_options::value<std::__cxx11::string>()->default_value("CRC"),
+                ("algorithm", boost::program_options::value<std::__cxx11::string>()->default_value("CRC"),
                  (boost::format("Алгоритм хэширования (возможные значения: %1%)") % algorithms).str().data())
                 ("debug", "Отладочная информация");
     }
@@ -189,7 +196,7 @@ private:
     bool processBlockSize() {
         if (vm.count("blocksize")) {
             try {
-                blocksize = parseSize(vm["blocksize"].as<std::string>());
+                blockSize = parseSize(vm["blocksize"].as<std::string>());
             } catch (const std::logic_error &) {
                 return false;
             }
@@ -198,11 +205,11 @@ private:
     }
 
     bool processAlgorithm() {
-        if (vm.count("algo")) {
-            auto alg = vm["algo"].as<std::string>();
+        if (vm.count("algorithm")) {
+            auto alg = vm["algorithm"].as<std::string>();
             boost::to_upper(alg);
-            if (HashFactory.getAlgoritms().count(alg)) {
-                algo = alg;
+            if (HashFactory.getAlgorithms().count(alg)) {
+                algorithm = alg;
             } else {
                 std::cerr << "Неизвестный алгоритм " << alg << std::endl;
                 exit_fail = true;
@@ -218,3 +225,4 @@ private:
     }
 
 };
+

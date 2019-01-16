@@ -5,12 +5,16 @@
 
 class fileDescriptor {
 public:
-    fileDescriptor(boost::filesystem::path path,
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection" //Конструктор используется неявно
+
+    fileDescriptor(const boost::filesystem::path &path,
+#pragma clang diagnostic pop
                    const options &opt,
-                   boost::function<boost::container::vector<unsigned char>(
-                           boost::container::vector<unsigned char> &buff)> hashFunc) :
+                   const boost::function<boost::container::vector<unsigned char>(
+                           boost::container::vector<unsigned char> &)> &hashFunc) :
             path(path), opt(opt), hashFunc(hashFunc) {
-        size_t blocks = (file_size(path) + opt.blocksize - 1) / opt.blocksize;
+        size_t blocks = (file_size(path) + opt.blockSize - 1) / opt.blockSize;
         hashes.resize(blocks);
     }
 
@@ -23,9 +27,9 @@ public:
                 std::cout << "Читаем файл " << path.filename().string() << " блок " << block << std::endl;
             }
             boost::iostreams::file_source in(path.string(), BOOST_IOS::binary);
-            boost::iostreams::seek(in, block * opt.blocksize, BOOST_IOS::beg);
-            boost::container::vector<unsigned char> buf(opt.blocksize);
-            in.read(reinterpret_cast<char *>(buf.data()), opt.blocksize);
+            boost::iostreams::seek(in, block * opt.blockSize, BOOST_IOS::beg);
+            boost::container::vector<unsigned char> buf(opt.blockSize);
+            in.read(reinterpret_cast<char *>(buf.data()), buf.size());
             hashes[block] = hashFunc(buf);
         }
         return hashes[block].get();
@@ -40,34 +44,23 @@ public:
     }
 
     bool operator<(const fileDescriptor &other) const {
-        boost::tuples::tuple<const int &, const int &> t = boost::minmax(getSize(), other.getSize());
+        if (getName() == other.getName()) {
+            return false;
+        }
+        auto t = boost::minmax(getSize(), other.getSize());
         auto minLen = t.get<0>();
         for (size_t i = 0; i < minLen; ++i) {
-            auto my = getBlock(i);
-            auto their = other.getBlock(i);
+            const auto &my = getBlock(i);
+            const auto &their = other.getBlock(i);
             if (my != their) {
                 return my < their;
             }
         }
         return getSize() < other.getSize();
     }
-
-    bool operator==(const fileDescriptor &other) const {
-        if (getSize() != other.getSize()) {
-            return false;
-        }
-        for (size_t i = 0; i < getSize(); ++i) {
-            auto my = getBlock(i);
-            auto their = other.getBlock(i);
-            if (my != their) {
-                return false;
-            }
-        }
-        return true;
-    }
 private:
     mutable boost::container::vector<boost::optional<boost::container::vector<unsigned char>>> hashes;
     const boost::filesystem::path path;
     const options &opt;
-    boost::function<boost::container::vector<unsigned char>(boost::container::vector<unsigned char> &buff)> hashFunc;
+    const boost::function<boost::container::vector<unsigned char>(boost::container::vector<unsigned char> &)> &hashFunc;
 };

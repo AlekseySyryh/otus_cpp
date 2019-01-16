@@ -101,11 +101,11 @@ public:
 #endif
     }
 
-    auto getFunction(std::string &algorythm) const {
-        return functions.at(algorythm);
+    auto getFunction(std::string &algorithm) const {
+        return functions.at(algorithm);
     }
 
-    auto getAlgoritms() const {
+    auto getAlgorithms() const {
         boost::container::set<std::string> keys;
         BOOST_FOREACH(auto rec, functions) {
                         keys.insert(rec.first);
@@ -117,7 +117,7 @@ private:
     boost::unordered_map<
             std::string,
             boost::function<boost::container::vector<unsigned char>(
-                    boost::container::vector<unsigned char> &buff)>> functions;
+                    boost::container::vector<unsigned char> &)>> functions;
 };
 
 static const hashFactory HashFactory;

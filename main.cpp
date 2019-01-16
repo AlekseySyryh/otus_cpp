@@ -23,8 +23,9 @@ auto getFiles(const options &opt) {
                                                          })) {
                                 files.emplace_back(it->path());
                             }
-                        } else if (it.depth() >= opt.deep ||
-                                   opt.dirsToExclude.count(it->path())) {
+                        } else if (is_directory(fs) &&
+                                   (it.depth() >= opt.deep ||
+                                    opt.dirsToExclude.count(it->path()))) {
                             it.no_push();
                         }
                         ++it;
@@ -49,7 +50,7 @@ int main(int argc, const char *argv[]) {
     }
     vector<path> files = getFiles(opt);
 
-    auto hashFunc = factory.getFunction(opt.algo);
+    auto hashFunc = factory.getFunction(opt.algorithm);
 
     boost::container::multiset<fileDescriptor> fds;
 
@@ -62,15 +63,16 @@ int main(int argc, const char *argv[]) {
 
     auto it = fds.begin();
     while (it != fds.end()) {
-        auto current = *it;
-        ++it;
-        if (it != fds.end() && *it == current) {
-            std::cout << current.getName() << std::endl;
-            while (it != fds.end() && *it == current) {
+        auto er = fds.equal_range(*it);
+        auto dist = boost::distance(er.first, er.second);
+        if (dist > 1) {
+            while (it != er.second) {
                 std::cout << it->getName() << std::endl;
                 ++it;
             }
             std::cout << std::endl;
+        } else {
+            ++it;
         }
     }
 
