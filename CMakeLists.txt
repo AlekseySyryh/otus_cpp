@@ -1,5 +1,10 @@
-cmake_minimum_required(VERSION 3.12)
-project(bayan)
+cmake_minimum_required(VERSION 3.2)
+
+if ($ENV{TRAVIS_BUILD_NUMBER})
+    project(bayan VERSION 0.0.$ENV{TRAVIS_BUILD_NUMBER})
+else ($ENV{TRAVIS_BUILD_NUMBER})
+    project(bayan VERSION 0.0.999)
+endif ($ENV{TRAVIS_BUILD_NUMBER})
 
 set(CMAKE_CXX_STANDARD 14)
 
@@ -15,4 +20,28 @@ ELSE (${OPENSSL_FOUND})
     message(WARNING "OpenSSL::Crypto not found - only Boost hashes will be available")
 ENDIF (${OPENSSL_FOUND})
 
+set_target_properties(bayan PROPERTIES
+        CXX_STANDARD 14
+        CXX_STANDARD_REQUIRED ON
+        COMPILE_OPTIONS "-Wpedantic;-Wall;-Wextra;-Werror;"
+        )
+
 target_link_libraries(bayan ${Boost_LIBRARIES})
+
+install(TARGETS bayan RUNTIME DESTINATION bin)
+
+set(CPACK_GENERATOR DEB)
+
+set(CPACK_PACKAGE_VERSION_MAJOR "${PROJECT_VERSION_MAJOR}")
+set(CPACK_PACKAGE_VERSION_MINOR "${PROJECT_VERSION_MINOR}")
+set(CPACK_PACKAGE_VERSION_PATCH "${PROJECT_VERSION_PATCH}")
+
+IF (${OPENSSL_FOUND})
+    set(CPACK_DEBIAN_PACKAGE_DEPENDS "libssl-dev,libboost-filesystem-dev,libboost-program-options-dev,libboost-regex-dev")
+ELSE (${OPENSSL_FOUND})
+    set(CPACK_DEBIAN_PACKAGE_DEPENDS "libboost-filesystem-dev,libboost-program-options-dev,libboost-regex-dev")
+ENDIF (${OPENSSL_FOUND})
+
+set(CPACK_PACKAGE_CONTACT asyryh@gmail.com)
+
+include(CPack)

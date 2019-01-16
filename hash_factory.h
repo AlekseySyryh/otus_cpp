@@ -19,7 +19,7 @@
 template<typename T>
 boost::container::vector<unsigned char> toVector(T value) {
     boost::container::vector<unsigned char> ret(sizeof(value));
-    for (int i = 0; i < sizeof(value); ++i) {
+    for (size_t i = 0; i < sizeof(value); ++i) {
         ret[i] = value % 256;
         value /= 256;
     }
@@ -31,7 +31,7 @@ boost::container::vector<unsigned char> getCrcHash(boost::container::vector<unsi
     result.process_bytes(buff.data(), buff.size());
     auto res = result.checksum();
     return toVector(res);
-};
+}
 
 boost::container::vector<unsigned char> getTR1Hash(boost::container::vector<unsigned char> &buff) {
     boost::hash<std::string> hasher;

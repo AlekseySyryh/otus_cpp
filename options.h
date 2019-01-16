@@ -11,11 +11,10 @@
 #include <boost/algorithm/cxx11/any_of.hpp>
 
 
-#pragma clang diagnostic push
-#pragma ide diagnostic ignored "cert-err58-cpp"
+
 static const boost::container::vector<std::string> charsToEscape = {"[", "]", "/", "^", "$", ".", "|", "+", "(", ")",
                                                                     "{", "}"};
-#pragma clang diagnostic pop
+
 
 class options {
 public:
@@ -23,8 +22,6 @@ public:
         try {
             fillDescription();
             store(parse_command_line(argc, argv, desc), vm);
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunused-value"
                     processHelp() &&
                     processScan() &&
                     processExclude() &&
@@ -34,7 +31,7 @@ public:
                     processBlockSize() &&
                     processAlgorithm() &&
                     processDebug();
-#pragma clang diagnostic pop
+
 
         }
         catch (const std::exception &e) {
@@ -49,7 +46,7 @@ public:
     bool exit_fail = false;
     boost::container::vector<boost::filesystem::path> dirsToScan;
     boost::unordered_set<boost::filesystem::path> dirsToExclude;
-    size_t deep = 0;
+    int deep = 0;
     size_t minsize = 0;
     boost::container::vector<boost::regex> masks;
     size_t blockSize = 0;
@@ -68,7 +65,7 @@ private:
                  "Директории для сканирования (может быть несколько)")
                 ("exclude,e", boost::program_options::value<std::vector<std::__cxx11::string>>(),
                  "Директории для исключения из сканирования (может быть несколько)")
-                ("deep,d", boost::program_options::value<size_t>()->default_value(0),
+                ("deep,d", boost::program_options::value<int>()->default_value(0),
                  "Глубина сканирования (один на все директории, 0 - только указанная директория без вложенных)")
                 ("minsize", boost::program_options::value<std::__cxx11::string>()->default_value("1B"),
                  "Минимальный размер файла, по умолчанию проверяются все файлы больше 1 байта")
@@ -133,7 +130,7 @@ private:
 
     bool processDeep() {
         if (vm.count("deep")) {
-            deep = vm["deep"].as<size_t>();
+            deep = vm["deep"].as<int>();
         }
         return true;
     }

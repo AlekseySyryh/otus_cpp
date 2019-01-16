@@ -5,11 +5,7 @@
 
 class fileDescriptor {
 public:
-#pragma clang diagnostic push
-#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection" //Конструктор используется неявно
-
     fileDescriptor(const boost::filesystem::path &path,
-#pragma clang diagnostic pop
                    const options &opt,
                    const boost::function<boost::container::vector<unsigned char>(
                            boost::container::vector<unsigned char> &)> &hashFunc) :
