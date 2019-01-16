@@ -1,21 +1,23 @@
 cmake_minimum_required(VERSION 3.2)
 
 if ($ENV{TRAVIS_BUILD_NUMBER})
-    project(ip_filter VERSION 0.0.$ENV{TRAVIS_BUILD_NUMBER})
+    project(range VERSION 0.0.$ENV{TRAVIS_BUILD_NUMBER})
 else ($ENV{TRAVIS_BUILD_NUMBER})
-    project(ip_filter)
+    project(range VERSION 0.0.999)
 endif ($ENV{TRAVIS_BUILD_NUMBER})
 
+include(conanbuildinfo.cmake)
+conan_basic_setup()
 
 set(CMAKE_CXX_STANDARD 14)
 
 find_package(Boost COMPONENTS unit_test_framework REQUIRED)
 
-add_executable(ip_filter ip_filter.cpp)
+add_executable(range ip_filter.cpp)
 
 add_executable(test_main tests.cpp)
 
-set_target_properties(ip_filter test_main PROPERTIES
+set_target_properties(range test_main PROPERTIES
         CXX_STANDARD 14
         CXX_STANDARD_REQUIRED ON
         COMPILE_OPTIONS "-Wpedantic;-Wall;-Wextra;-Werror;"
@@ -30,7 +32,7 @@ target_link_libraries(test_main
         ${Boost_LIBRARIES}
         )
 
-install(TARGETS ip_filter RUNTIME DESTINATION bin)
+install(TARGETS range RUNTIME DESTINATION bin)
 
 set(CPACK_GENERATOR DEB)
 

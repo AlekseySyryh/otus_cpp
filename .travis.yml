@@ -3,7 +3,9 @@ compiler: gcc
 dist: xenial
 
 before_script:
-- sudo apt-get install libboost-test-dev -y
+- sudo apt-get install libboost-test-dev python3-pip -y
+- pip3 install conan
+- conan install .
 script:
 - cmake .
 - cmake --build .
