@@ -24,7 +24,7 @@ auto getFiles(const options &opt) {
                                 files.emplace_back(it->path());
                             }
                         } else if (is_directory(fs) &&
-                                   (it.depth() >= opt.deep ||
+                                   (it.level() >= opt.deep ||
                                     opt.dirsToExclude.count(it->path()))) {
                             it.no_push();
                         }
