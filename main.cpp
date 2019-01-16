@@ -3,7 +3,7 @@
 #include "options.h"
 #include <boost/iostreams/device/file.hpp>
 #include "file_descriptor.h"
-#include <boost/iterator/distance.hpp>
+
 
 auto getFiles(const options &opt) {
     using namespace boost::container;
@@ -64,8 +64,7 @@ int main(int argc, const char *argv[]) {
     auto it = fds.begin();
     while (it != fds.end()) {
         auto er = fds.equal_range(*it);
-        auto dist = boost::distance(er.first, er.second);
-        if (dist > 1) {
+        if (boost::next(er.first) != er.second) {
             while (it != er.second) {
                 std::cout << it->getName() << std::endl;
                 ++it;
