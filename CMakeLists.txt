@@ -15,7 +15,7 @@ add_executable(bayan main.cpp)
 
 IF (${OPENSSL_FOUND})
     target_link_libraries(bayan OpenSSL::Crypto)
-    add_compile_definitions(WITH_OPENSSL)
+    add_definitions(-DWITH_OPENSSL)
 ELSE (${OPENSSL_FOUND})
     message(WARNING "OpenSSL::Crypto not found - only Boost hashes will be available")
 ENDIF (${OPENSSL_FOUND})
