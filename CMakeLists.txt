@@ -7,7 +7,7 @@ else ($ENV{TRAVIS_BUILD_NUMBER})
 endif ($ENV{TRAVIS_BUILD_NUMBER})
 
 set(CMAKE_CXX_STANDARD 14)
-
+set(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
 find_package(Threads REQUIRED)
 add_executable(bulkmt main.cpp)
 target_link_libraries(bulkmt ${CMAKE_THREAD_LIBS_INIT})
