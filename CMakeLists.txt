@@ -8,9 +8,11 @@ endif ($ENV{TRAVIS_BUILD_NUMBER})
 
 set(CMAKE_CXX_STANDARD 14)
 
+find_package(Threads REQUIRED)
 add_executable(bulkmt main.cpp)
+target_link_libraries(bulkmt ${CMAKE_THREAD_LIBS_INIT})
 
-set_target_properties(bulk PROPERTIES
+set_target_properties(bulkmt PROPERTIES
         CXX_STANDARD 14
         CXX_STANDARD_REQUIRED ON
         COMPILE_OPTIONS "-Wpedantic;-Wall;-Wextra;-Werror;"

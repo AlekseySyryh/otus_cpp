@@ -2,14 +2,20 @@
 
 #include "observer.h"
 
-struct FileObserver : Observer {
-    void process(std::shared_ptr<const Block> blk) const override {
+class FileObserver : public Observer {
+public:
+    explicit FileObserver(size_t workersNo) : Observer(workersNo) {
+        name = "file";
+    }
+
+private:
+    void processBlock(std::shared_ptr<const Block> blk, size_t workerId) const override {
         if (blk->getCommands().empty()) {
             return;
         }
         std::ofstream fs;
         std::stringstream ss;
-        ss << "bulk" << blk->getTime() << ".log";
+        ss << "bulk" << blk->getTime() << "." << workerId << ".log";
         fs.open(ss.str());
 
         bool first = true;

@@ -13,11 +13,12 @@
 #include "block_processor.h"
 #include "fixed_block.h"
 #include "dynamic_block.h"
+#include "terminal_block.h"
 
 int main(int argc, char *argv[]) {
     if (argc != 2) {
         std::cerr << "Следует указать единственный параметр - размер блока" << std::endl;
-        return 1;
+        return EXIT_FAILURE;
     }
 
     const size_t max_block_size = 1000000000;
@@ -31,11 +32,11 @@ int main(int argc, char *argv[]) {
     catch (std::logic_error &) {
         std::cerr << "Размер блока должен быть целым, положительным числом, не более "
                   << max_block_size << std::endl;
-        return 1;
+        return EXIT_FAILURE;
     }
     std::shared_ptr<Observers> obs = std::make_shared<Observers>();
-    obs->add(std::make_unique<ConsoleObserver>());
-    obs->add(std::make_unique<FileObserver>());
+    obs->add(std::make_unique<ConsoleObserver>(1));
+    obs->add(std::make_unique<FileObserver>(2));
 
     std::shared_ptr<BlockBuilder> bb = std::make_shared<BlockBuilder>(block_size);
 
@@ -46,8 +47,6 @@ int main(int argc, char *argv[]) {
     while (std::getline(std::cin, line)) {
         proc.processCommand(line);
     }
-
-
-    return 0;
+    return EXIT_SUCCESS;
 }
 

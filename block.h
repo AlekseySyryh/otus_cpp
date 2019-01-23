@@ -12,6 +12,9 @@ public:
         };
     }
 
+    virtual bool isTerminalBlock() const {
+        return false;
+    }
     void addCommand(std::string &command) {
         if (command == "{" || command == "}") {
             processSpecialCommand(command);
@@ -35,6 +38,10 @@ public:
         return commands;
     }
 
+    size_t getNumberOfCommands() const {
+        return commands.size();
+    }
+
     virtual void close() {}
 
     bool isComplete() const {
@@ -48,7 +55,7 @@ public:
 protected:
     std::function<std::shared_ptr<Block>()> nextBlockFunc;
 
-    virtual void processSpecialCommand(std::string &) = 0;
+    virtual void processSpecialCommand(std::string &) {};
 
     virtual void checkIsComplete() {};
     bool complete = false;

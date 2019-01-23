@@ -2,8 +2,14 @@
 
 #include "observer.h"
 
-struct ConsoleObserver : Observer {
-    void process(std::shared_ptr<const Block> blk) const override {
+class ConsoleObserver : public Observer {
+public:
+    explicit ConsoleObserver(size_t blockNo) : Observer(blockNo) {
+        name = "log";
+    }
+
+private:
+    void processBlock(std::shared_ptr<const Block> blk, size_t) const override {
         if (blk->getCommands().empty()) {
             return;
         }
@@ -19,5 +25,6 @@ struct ConsoleObserver : Observer {
                       });
         std::cout << std::endl;
     }
+
 };
 
