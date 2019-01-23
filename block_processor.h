@@ -18,7 +18,7 @@ public:
         if (currentBlock->isComplete()) {
             notify();
         }
-        std::cout << "main поток - " << lines << " строк, " << blocks << " блоков, " << commands << " комманд"
+        std::cout << "main поток - " << lines << " строк, " << blocks << " блоков, " << commands << " команд"
                   << std::endl;
     }
 

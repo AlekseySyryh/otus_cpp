@@ -18,19 +18,19 @@ public:
                     std::shared_ptr<const Block> data;
                     {
                         std::unique_lock<std::mutex> dataLock(dataLockMutex);
-                        dataReady.wait(dataLock,
-                                       [this] { return !blocksQueue.empty(); });
+                        dataReady.wait(dataLock, [this] { return !blocksQueue.empty(); });
                         data = blocksQueue.front();
-                        blocksQueue.pop();
-
+                        if (data->isTerminalBlock()) {
+                            dataReady.notify_one(); //Прочитал сам - дай другим почитать!
+                        } else {
+                            blocksQueue.pop();
+                        }
                     }
                     if (data->isTerminalBlock()) {
-                        blocksQueue.push(data);
-                        dataReady.notify_one();
                         std::lock_guard<std::mutex> consoleLock(consoleMutex);
-                        std::cout << name << i + 1 << " поток - " << blocks << " блоков, " << commands << " комманд"
+                        std::cout << name << i + 1 << " поток - " << blocks << " блоков, " << commands << " команд"
                                   << std::endl;
-                        break;
+                        return;
                     }
                     ++blocks;
                     commands += data->getNumberOfCommands();
