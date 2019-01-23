@@ -8,6 +8,7 @@ endif ($ENV{TRAVIS_BUILD_NUMBER})
 
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
+
 find_package(Threads REQUIRED)
 add_executable(bulkmt main.cpp)
 target_link_libraries(bulkmt ${CMAKE_THREAD_LIBS_INIT})
@@ -16,7 +17,10 @@ set_target_properties(bulkmt PROPERTIES
         CXX_STANDARD 14
         CXX_STANDARD_REQUIRED ON
         COMPILE_OPTIONS "-Wpedantic;-Wall;-Wextra;-Werror;"
+        LINK_SEARCH_START_STATIC 1
+        LINK_SEARCH_END_STATIC 1
         )
+set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++")
 
 install(TARGETS bulkmt RUNTIME DESTINATION bin)
 
