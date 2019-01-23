@@ -26,9 +26,12 @@ public:
         ++lines;
         currentBlock->addCommand(command);
         if (currentBlock->isComplete()) {
-            ++blocks;
-            commands += currentBlock->getNumberOfCommands();
-            notify();
+            size_t numberOfCommands = currentBlock->getNumberOfCommands();
+            if (numberOfCommands > 0) {
+                ++blocks;
+                commands += numberOfCommands;
+                notify();
+            }
             currentBlock = currentBlock->getNextBlockBuilder()();
         }
     }
