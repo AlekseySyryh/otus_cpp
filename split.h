@@ -8,17 +8,19 @@
 
 
 std::vector<std::string> split(const std::string &str, char d) {
-    auto spl = ranges::v3::action::split(str,d);
+    std::vector<std::string> r;
 
-    //Не сказать что это прям нужно, но поведение без этих строк повединие тестов изменяется.
-    //Формально тесты менять не хорошо (поведение при переписывании меняться не должно).
-    //То что поведение поменялось в тех ситуациях которые в данной программе не возникнут - не важно,
-    //а ну как это у нас header-only библиотека внезапно :)
-    if (str.size() == 0 || str[str.size()-1]==d){
-        ranges::v3::action::push_back(spl,"");
+    std::string::size_type start = 0;
+    std::string::size_type stop = str.find_first_of(d);
+    while (stop != std::string::npos) {
+        r.push_back(str.substr(start, stop - start));
+        start = stop + 1;
+        stop = str.find_first_of(d, start);
     }
 
-    return spl;
+    r.push_back(str.substr(start));
+
+    return r;
 }
 
 std::vector<int> splitInt(const std::string &str, char d) {
