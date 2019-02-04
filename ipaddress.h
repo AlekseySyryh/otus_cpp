@@ -4,6 +4,7 @@
 #include <tuple>
 #include <algorithm>
 #include <sstream>
+#include <range/v3/all.hpp>
 
 class ipAddress {
 public:
@@ -13,34 +14,30 @@ public:
     ipAddress(std::initializer_list<int> digits) : ipAddress(std::vector<int>(digits)) {
     }
 
-    explicit ipAddress(std::vector<int> digitsStrings) : digits() {
-        if (digitsStrings.size() != 4) {
+    explicit ipAddress(std::vector<int> digitVector) {
+        if (digitVector.size() != digits.size() ||
+            ranges::any_of(digitVector, [](int a) { return a < 0 || a > 255; })) {
             throw std::logic_error("Wrong ip");
         }
-        for (int i = 0; i < 4; ++i) {
-            digits[i] = digitsStrings[i];
-            if (digits[i] < 0 || digits[i] > 255) {
-                throw std::logic_error("Wrong ip");
-            }
-        }
+        ranges::copy(digitVector, digits.data());
     }
 
-    const std::array<int, 4> *getDigits() const {
-        return &digits;
+    const std::array<int, 4> &getDigits() const {
+        return digits;
     }
 
     std::string getString() const {
         std::ostringstream oss;
         bool first = true;
-        for (auto d : digits) {
-            if (!first) {
-                oss << ".";
-            } else {
-                first = false;
-            }
-            oss << d;
-
-        }
+        ranges::for_each(digits,
+                         [&oss, &first](const auto &d) {
+                             if (!first) {
+                                 oss << ".";
+                             } else {
+                                 first = false;
+                             }
+                             oss << d;
+                         });
         return oss.str();
     }
 
@@ -60,12 +57,12 @@ public:
                 std::is_same<std::common_type_t<Args...>, int>::value,
                 "Wrong parameter types");
         std::array<int, sizeof...(args)> filter{args...};
-        return std::equal(filter.begin(), filter.end(),
-                          digits.begin(), std::next(digits.begin(), std::min(digits.size(), filter.size())));
+        return ranges::equal(filter.begin(), filter.end(),
+                             digits.begin(), std::next(digits.begin(), std::min(digits.size(), filter.size())));
     }
 
     bool isMatchAny(int digit) const {
-        return std::any_of(digits.begin(), digits.end(), [digit](const auto d) { return d == digit; });
+        return ranges::any_of(digits, [digit](const auto d) { return d == digit; });
     }
 
 private:
@@ -74,13 +71,13 @@ private:
 };
 
 bool operator==(const ipAddress &lhs, const ipAddress &rhs) {
-    return *lhs.getDigits() == *rhs.getDigits();
+    return lhs.getDigits() == rhs.getDigits();
 }
 
 bool operator<(const ipAddress &lhs, const ipAddress &rhs) {
-    return *lhs.getDigits() < *rhs.getDigits();
+    return lhs.getDigits() < rhs.getDigits();
 }
 
 bool operator>(const ipAddress &lhs, const ipAddress &rhs) {
-    return *lhs.getDigits() > *rhs.getDigits();
+    return lhs.getDigits() > rhs.getDigits();
 }

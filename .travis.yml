@@ -4,6 +4,8 @@ dist: xenial
 
 before_script:
 - sudo apt-get install libboost-test-dev python3-pip -y
+- pip3 install setuptools
+- pip3 install wheel
 - pip3 install conan
 - conan install .
 script:

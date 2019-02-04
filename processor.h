@@ -5,6 +5,7 @@
 #include <vector>
 #include <functional>
 #include <algorithm>
+#include <range/v3/all.hpp>
 
 struct processor {
     explicit processor(
@@ -12,41 +13,29 @@ struct processor {
             func(std::move(processor)) {}
 
     void sortVector(std::vector<ipAddress> &ip_pool) {
-        sort(ip_pool.begin(), ip_pool.end(), std::greater<>());
+        ranges::action::sort(ip_pool, std::greater<>());
     }
 
-    void showAll(std::vector<ipAddress> &ip_pool) const {
-        for (const auto &ip : ip_pool) {
-            func(ip.getString());
-        }
+    void showAll(const std::vector<ipAddress> &ip_pool) const {
+        ranges::for_each(ip_pool, [this](const auto &ip) { func(ip.getString()); });
     }
 
     template<typename ...Args>
     void filter(std::vector<ipAddress> &ip_pool, Args... args) const {
-        auto it = ip_pool.begin();
-        while ((it = std::find_if(
-                it,
-                ip_pool.end(),
-                [args...](const auto &ip) {
-                    return ip.isMatch(args...);
-                })) != ip_pool.end()) {
-            func(it->getString());
-            ++it;
-        }
+        ranges::for_each(ip_pool, [this, args...](const auto &ip) {
+            if (ip.isMatch(args...)) {
+                func(ip.getString());
+            }
+        });
     }
 
 
     void filterAny(std::vector<ipAddress> &ip_pool, int value) const {
-        auto it = ip_pool.begin();
-        while ((it = std::find_if(
-                it,
-                ip_pool.end(),
-                [value](const auto &ip) {
-                    return ip.isMatchAny(value);
-                })) != ip_pool.end()) {
-            func(it->getString());
-            ++it;
-        }
+        ranges::for_each(ip_pool, [this, value](const auto &ip) {
+            if (ip.isMatchAny(value)) {
+                func(ip.getString());
+            }
+        });
     }
 
 private:
