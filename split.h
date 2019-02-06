@@ -9,16 +9,15 @@
 
 std::vector<std::string> split(const std::string &str, char d) {
     std::vector<std::string> r;
-
-    std::string::size_type start = 0;
-    std::string::size_type stop = str.find_first_of(d);
-    while (stop != std::string::npos) {
-        r.push_back(str.substr(start, stop - start));
-        start = stop + 1;
-        stop = str.find_first_of(d, start);
+    auto start = ranges::begin(str);
+    auto stop = ranges::find(str, d);
+    auto end = ranges::end(str);
+    while (stop != end) {
+        r.emplace_back(start, stop);
+        start = ranges::next(stop);
+        stop = ranges::find(start, end, d);
     }
-
-    r.push_back(str.substr(start));
+    r.emplace_back(start, end);
 
     return r;
 }
@@ -27,12 +26,10 @@ std::vector<int> splitInt(const std::string &str, char d) {
     auto strings = split(str, d);
     auto ints = std::vector<int>();
     ints.reserve(strings.size());
-    std::transform(
-            std::begin(strings),
-            std::end(strings),
-            std::back_inserter(ints),
-            [](const std::string &str) {
-                return std::stoi(str);
+    ranges::for_each(
+            strings,
+            [&ints](const std::string &str) {
+                return ints.emplace_back(std::stoi(str));
             });
     return ints;
 }
