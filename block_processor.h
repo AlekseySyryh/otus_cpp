@@ -18,6 +18,7 @@ public:
         if (currentBlock->isComplete()) {
             notify();
         }
+        std::lock_guard<std::mutex> consoleLock(consoleMutex);
         std::cout << "main поток - " << lines << " строк, " << blocks << " блоков, " << commands << " команд"
                   << std::endl;
     }

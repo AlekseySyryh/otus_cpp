@@ -1,18 +1,20 @@
 #pragma once
 
-#include "observer.h"
+#include "worker.h"
 
-class ConsoleObserver : public Observer {
+class ConsoleWorker : Worker {
 public:
-    explicit ConsoleObserver(size_t blockNo) : Observer(blockNo) {
-        name = "log";
+    explicit ConsoleWorker(size_t workerId) : Worker(workerId) {}
+
+    std::string getName() override {
+        return "log";
     }
 
-private:
-    void processBlock(std::shared_ptr<const Block> blk, size_t) const override {
+    void processBlock(std::shared_ptr<const Block> blk, size_t) override {
         if (blk->getCommands().empty()) {
             return;
         }
+        std::lock_guard<std::mutex> consoleLock(consoleMutex);
         std::cout << "bulk: ";
         bool first = true;
         std::for_each(blk->getCommands().begin(), blk->getCommands().end(),
@@ -23,8 +25,7 @@ private:
                           first = false;
                           std::cout << " " << command;
                       });
-        std::cout << std::endl;
+        std::cout << "\n";
     }
-
 };
 

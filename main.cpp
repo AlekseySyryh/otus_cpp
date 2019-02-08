@@ -7,8 +7,8 @@
 #include <fstream>
 #include <sstream>
 #include "observers.h"
-#include "console_observer.h"
-#include "file_observer.h"
+#include "console_worker.h"
+#include "file_worker.h"
 #include "block_builder.h"
 #include "block_processor.h"
 #include "fixed_block.h"
@@ -35,8 +35,8 @@ int main(int argc, char *argv[]) {
         return EXIT_FAILURE;
     }
     std::shared_ptr<Observers> obs = std::make_shared<Observers>();
-    obs->add(std::make_unique<ConsoleObserver>(1));
-    obs->add(std::make_unique<FileObserver>(2));
+    obs->add(std::make_unique<Observer<ConsoleWorker>>(1));
+    obs->add(std::make_unique<Observer<FileWorker>>(2));
 
     std::shared_ptr<BlockBuilder> bb = std::make_shared<BlockBuilder>(block_size);
 

@@ -1,15 +1,17 @@
 #pragma once
 
-#include "observer.h"
+#include "worker.h"
 
-class FileObserver : public Observer {
+class FileWorker : Worker {
 public:
-    explicit FileObserver(size_t workersNo) : Observer(workersNo) {
-        name = "file";
+    explicit FileWorker(size_t workersNo) : Worker(workersNo) {
     }
 
-private:
-    void processBlock(std::shared_ptr<const Block> blk, size_t workerId) const override {
+    std::string getName() override {
+        return "file";
+    }
+
+    void processBlock(std::shared_ptr<const Block> blk, size_t) override {
         if (blk->getCommands().empty()) {
             return;
         }

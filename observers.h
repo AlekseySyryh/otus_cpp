@@ -10,7 +10,8 @@ public:
     ~Observers() {
         notify(std::make_shared<const TerminalBlock>());
     }
-    void add(std::unique_ptr<Observer> &&obs) {
+
+    void add(std::unique_ptr<ObserverBase> &&obs) {
         observers.push_back(std::move(obs));
     }
 
@@ -24,6 +25,6 @@ public:
     }
 
 private:
-    std::vector<std::unique_ptr<Observer>> observers;
+    std::vector<std::unique_ptr<ObserverBase>> observers;
 };
 

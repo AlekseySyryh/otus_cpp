@@ -5,15 +5,32 @@
 #include <vector>
 #include <condition_variable>
 #include <future>
+#include "console_mutex.h"
+#include <type_traits>
 
-static std::mutex consoleMutex;
+class ObserverBase {
+public:
+    void process(std::shared_ptr<const Block> blk) {
+        std::lock_guard<std::mutex> dataLock(dataLockMutex);
+        blocksQueue.push(blk);
+        dataReady.notify_one();
+    }
 
-class Observer {
+protected:
+    std::mutex dataLockMutex;
+    std::condition_variable dataReady;
+    std::queue<std::shared_ptr<const Block>> blocksQueue;
+    std::vector<std::future<void>> workers;
+};
+
+template<class Worker>
+class Observer : public ObserverBase {
 public:
     explicit Observer(size_t workersNo) {
         for (size_t i = 0; i < workersNo; ++i) {
             workers.push_back(std::async([this, i]() -> void {
                 size_t blocks = 0, commands = 0;
+                auto worker = std::make_unique<Worker>(i);
                 while (true) {
                     std::shared_ptr<const Block> data;
                     {
@@ -28,31 +45,16 @@ public:
                     }
                     if (data->isTerminalBlock()) {
                         std::lock_guard<std::mutex> consoleLock(consoleMutex);
-                        std::cout << name << i + 1 << " поток - " << blocks << " блоков, " << commands << " команд"
+                        std::cout << worker->getName() << i + 1 << " поток - " << blocks << " блоков, " << commands
+                                  << " команд"
                                   << std::endl;
                         return;
                     }
                     ++blocks;
                     commands += data->getNumberOfCommands();
-                    processBlock(data, i);
+                    worker->processBlock(data, i);
                 }
             }));
         }
     }
-
-    void process(std::shared_ptr<const Block> blk) {
-        std::lock_guard<std::mutex> dataLock(dataLockMutex);
-        blocksQueue.push(blk);
-        dataReady.notify_one();
-    }
-
-protected:
-    std::string name;
-private:
-    std::mutex dataLockMutex;
-    std::condition_variable dataReady;
-    std::queue<std::shared_ptr<const Block>> blocksQueue;
-    std::vector<std::future<void>> workers;
-
-    virtual void processBlock(std::shared_ptr<const Block> blk, size_t workerId) const = 0;
 };
