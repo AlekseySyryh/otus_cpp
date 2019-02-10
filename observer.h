@@ -38,7 +38,7 @@ public:
                         dataReady.wait(dataLock, [this] { return !blocksQueue.empty(); });
                         data = blocksQueue.front();
                         if (data->isTerminalBlock()) {
-                            dataReady.notify_one(); //Прочитал сам - дай другим почитать!
+                            dataReady.notify_all();
                         } else {
                             blocksQueue.pop();
                         }
