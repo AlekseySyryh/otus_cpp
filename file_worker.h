@@ -17,7 +17,7 @@ public:
         }
         std::ofstream fs;
         std::stringstream ss;
-        ss << "bulk" << blk->getTime() << "." << workerId << ".log";
+        ss << "bulk" << blk->getTime() << "." << workerId << "." << ++blk_id << ".log";
         fs.open(ss.str());
 
         bool first = true;
@@ -32,4 +32,6 @@ public:
         fs << std::endl;
         fs.close();
     }
+private:
+    size_t blk_id = 0;
 };
