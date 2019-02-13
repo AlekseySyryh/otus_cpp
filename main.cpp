@@ -1,52 +1,17 @@
 #include <iostream>
-#include <ctime>
-#include <limits>
-#include <vector>
-#include <algorithm>
-#include <memory>
-#include <fstream>
-#include <sstream>
-#include "observers.h"
-#include "console_worker.h"
-#include "file_worker.h"
-#include "block_builder.h"
-#include "block_processor.h"
-#include "fixed_block.h"
-#include "dynamic_block.h"
-#include "terminal_block.h"
 
-int main(int argc, char *argv[]) {
-    if (argc != 2) {
-        std::cerr << "Следует указать единственный параметр - размер блока" << std::endl;
-        return EXIT_FAILURE;
-    }
+#include "async.h"
 
-    const size_t max_block_size = 1000000000;
-    size_t block_size;
-    try {
-        block_size = std::stoul(argv[1]);
-        if (block_size > max_block_size) {
-            throw std::out_of_range("");
-        }
-    }
-    catch (std::logic_error &) {
-        std::cerr << "Размер блока должен быть целым, положительным числом, не более "
-                  << max_block_size << std::endl;
-        return EXIT_FAILURE;
-    }
-    std::shared_ptr<Observers> obs = std::make_shared<Observers>();
-    obs->add(std::make_unique<Observer<ConsoleWorker>>(1));
-    obs->add(std::make_unique<Observer<FileWorker>>(2));
+int main(int, char *[]) {
+    std::size_t bulk = 5;
+    auto h = async::connect(bulk);
+    auto h2 = async::connect(bulk);
+    async::receive(h, "1", 1);
+    async::receive(h2, "1\n", 2);
+    async::receive(h, "\n2\n3\n4\n5\n6\n{\na\n", 15);
+    async::receive(h, "b\nc\nd\n}\n89\n", 11);
+    async::disconnect(h);
+    async::disconnect(h2);
 
-    std::shared_ptr<BlockBuilder> bb = std::make_shared<BlockBuilder>(block_size);
-
-
-    BlockProcessor proc(obs, bb);
-
-    std::string line;
-    while (std::getline(std::cin, line)) {
-        proc.processCommand(line);
-    }
-    return EXIT_SUCCESS;
+    return 0;
 }
-
