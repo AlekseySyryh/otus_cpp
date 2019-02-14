@@ -2,6 +2,7 @@
 
 #include <tuple>
 #include <functional>
+#include <vector>
 
 class Block {
 public:

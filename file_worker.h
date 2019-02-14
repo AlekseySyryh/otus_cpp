@@ -1,6 +1,8 @@
 #pragma once
 
 #include "worker.h"
+#include <sstream>
+#include <fstream>
 
 class FileWorker : Worker {
 public:

@@ -7,7 +7,8 @@
 class BlockProcessor {
 public:
     BlockProcessor(std::shared_ptr<NotifyReceivers> notifyReceivers,
-                   std::shared_ptr<BlockBuilder> blockBuilder) :
+                   std::shared_ptr<BlockBuilder> blockBuilder, size_t clientId) :
+            clientId(clientId),
             notifyReceivers(notifyReceivers),
             blockBuilder(blockBuilder) {
         currentBlock = blockBuilder->buildDefaultBlock()();
@@ -16,10 +17,13 @@ public:
     ~BlockProcessor() {
         currentBlock->close();
         if (currentBlock->isComplete()) {
+            ++blocks;
+            commands += currentBlock->getNumberOfCommands();
             notify();
         }
         std::lock_guard<std::mutex> consoleLock(consoleMutex);
-        std::cout << "main поток - " << lines << " строк, " << blocks << " блоков, " << commands << " команд"
+        std::cout << "main " << clientId << " поток - " << lines << " строк, " << blocks << " блоков, " << commands
+                  << " команд"
                   << std::endl;
     }
 
@@ -38,7 +42,7 @@ public:
     }
 
 private:
-    size_t lines = 0, blocks = 0, commands = 0;
+    size_t lines = 0, blocks = 0, commands = 0, clientId;
     std::shared_ptr<Block> currentBlock;
     std::shared_ptr<NotifyReceivers> notifyReceivers;
     std::shared_ptr<BlockBuilder> blockBuilder;

@@ -7,6 +7,7 @@
 #include <future>
 #include "console_mutex.h"
 #include <type_traits>
+#include <iostream>
 
 class ObserverBase {
 public:
