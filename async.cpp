@@ -25,9 +25,9 @@ namespace async {
         client(std::string buffer, std::unique_ptr<BlockProcessor> proc) : buffer(buffer), proc(std::move(proc)) {
 
         }
-
         std::string buffer;
         std::unique_ptr<BlockProcessor> proc;
+        std::mutex reenterMutex;
     };
 
     static size_t clientId;
@@ -46,6 +46,7 @@ namespace async {
         auto id = reinterpret_cast<size_t>(handle);
         std::unique_lock<std::shared_timed_mutex> lock(mutex);
         std::shared_ptr<client> client = clients[id];
+        std::lock_guard<std::mutex> reenterGuard(client->reenterMutex);
         client->buffer.append(data, size);
         std::string::iterator it;
         while ((it = std::find(client->buffer.begin(), client->buffer.end(), '\n')) != client->buffer.end()) {
