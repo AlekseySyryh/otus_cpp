@@ -16,6 +16,8 @@ public:
     ~BlockProcessor() {
         currentBlock->close();
         if (currentBlock->isComplete()) {
+            ++blocks;
+            commands += currentBlock->getNumberOfCommands();
             notify();
         }
         std::lock_guard<std::mutex> consoleLock(consoleMutex);
