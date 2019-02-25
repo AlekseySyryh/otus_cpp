@@ -16,35 +16,24 @@ public:
     virtual bool isTerminalBlock() const {
         return false;
     }
+
     void addCommand(std::string &command) {
         if (command == "{" || command == "}") {
             processSpecialCommand(command);
         } else {
-            if (commands.empty()) {
-                time = std::time(NULL);
-            }
-            commands.push_back(command);
-            checkIsComplete();
+            processRegularCommand(command);
         }
     }
 
-    std::time_t getTime() const {
-        if (commands.empty()) {
-            throw std::logic_error("Блок пуст - времени нет");
-        }
-        return time;
-    }
+    virtual std::time_t getTime() const = 0;
 
-    const std::vector<std::string> &getCommands() const {
-        return commands;
-    }
+    virtual const std::vector<std::string> &getCommands() const = 0;
 
-    size_t getNumberOfCommands() const {
-        return commands.size();
-    }
+    virtual size_t getNumberOfCommands() const = 0;
 
     virtual void close() {}
 
+    virtual void clear() {}
     bool isComplete() const {
         return complete;
     }
@@ -56,12 +45,10 @@ public:
 protected:
     std::function<std::shared_ptr<Block>()> nextBlockFunc;
 
-    virtual void processSpecialCommand(std::string &) {};
+    virtual void processSpecialCommand(std::string &) = 0;
 
+    virtual void processRegularCommand(std::string &) = 0;
     virtual void checkIsComplete() {};
     bool complete = false;
-    std::vector<std::string> commands{};
-private:
-    std::time_t time{};
 };
 

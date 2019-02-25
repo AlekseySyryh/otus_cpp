@@ -1,32 +1,36 @@
-cmake_minimum_required(VERSION 3.9)
+cmake_minimum_required(VERSION 3.2)
+
 if ($ENV{TRAVIS_BUILD_NUMBER})
-    project(async VERSION 0.0.$ENV{TRAVIS_BUILD_NUMBER})
+    project(bulk_server VERSION 0.0.$ENV{TRAVIS_BUILD_NUMBER})
 else ($ENV{TRAVIS_BUILD_NUMBER})
-    project(async VERSION 0.0.999)
+    project(bulk_server VERSION 0.0.999)
 endif ($ENV{TRAVIS_BUILD_NUMBER})
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 
 set(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
+
 find_package(Threads REQUIRED)
+find_package(Boost REQUIRED COMPONENTS system)
 
-add_library(async SHARED async.cpp async.h)
+INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})
+LINK_DIRECTORIES(${Boost_LIBRARY_DIRS})
 
-add_executable(async_cli main.cpp)
+add_executable(bulk_server main.cpp async.cpp)
 
-target_link_libraries(async_cli async)
-target_link_libraries(async ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries(bulk_server ${CMAKE_THREAD_LIBS_INIT} ${Boost_SYSTEM_LIBRARY})
 
-set_target_properties(async_cli async PROPERTIES
-        CXX_STANDARD 14
+set_target_properties(bulk_server PROPERTIES
+        CXX_STANDARD 17
         CXX_STANDARD_REQUIRED ON
         COMPILE_OPTIONS "-Wpedantic;-Wall;-Wextra;-Werror;"
         LINK_SEARCH_START_STATIC 1
         LINK_SEARCH_END_STATIC 1
         )
+
 set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++")
 
-install(TARGETS async LIBRARY DESTINATION lib)
+install(TARGETS bulk_server RUNTIME DESTINATION bin)
 
 set(CPACK_GENERATOR DEB)
 
