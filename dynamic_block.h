@@ -9,30 +9,7 @@ public:
             openedBrackets(1), blockBuilder(blockBuilder) {
     }
 
-    time_t getTime() const override {
-        if (commands.empty()) {
-            throw std::logic_error("Блок пуст - времени нет");
-        }
-        return time;
-    }
-
-    const std::vector<std::string> &getCommands() const override {
-        return commands;
-    }
-
-    size_t getNumberOfCommands() const override {
-        return commands.size();
-    }
-
 protected:
-    void processRegularCommand(std::string &command) override {
-        if (commands.empty()) {
-            time = std::time(NULL);
-        }
-        commands.push_back(command);
-        checkIsComplete();
-    }
-
     void processSpecialCommand(std::string &command) override {
         if (command == "{") {
             ++openedBrackets;
@@ -48,8 +25,6 @@ protected:
 private:
     size_t openedBrackets;
     std::shared_ptr<BlockBuilder> blockBuilder;
-    std::time_t time{};
-    std::vector<std::string> commands{};
 };
 
 std::function<std::shared_ptr<Block>()> BlockBuilder::buildDynamicBlock() {
