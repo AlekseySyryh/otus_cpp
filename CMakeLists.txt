@@ -28,7 +28,7 @@ set_target_properties(bulk_server PROPERTIES
         LINK_SEARCH_END_STATIC 1
         )
 
-set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++")
+set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++ -static")
 
 install(TARGETS bulk_server RUNTIME DESTINATION bin)
 
