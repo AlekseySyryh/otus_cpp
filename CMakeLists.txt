@@ -7,7 +7,7 @@ else ($ENV{TRAVIS_BUILD_NUMBER})
 endif ($ENV{TRAVIS_BUILD_NUMBER})
 
 set(CMAKE_CXX_STANDARD 14)
-
+set(Boost_USE_STATIC_LIBS   ON)
 find_package(OpenSSL COMPONENTS Crypto)
 find_package(Boost COMPONENTS filesystem program_options regex REQUIRED)
 
@@ -37,9 +37,7 @@ set(CPACK_PACKAGE_VERSION_MINOR "${PROJECT_VERSION_MINOR}")
 set(CPACK_PACKAGE_VERSION_PATCH "${PROJECT_VERSION_PATCH}")
 
 IF (${OPENSSL_FOUND})
-    set(CPACK_DEBIAN_PACKAGE_DEPENDS "libssl-dev,libboost-filesystem-dev,libboost-program-options-dev,libboost-regex-dev")
-ELSE (${OPENSSL_FOUND})
-    set(CPACK_DEBIAN_PACKAGE_DEPENDS "libboost-filesystem-dev,libboost-program-options-dev,libboost-regex-dev")
+    set(CPACK_DEBIAN_PACKAGE_DEPENDS "libssl-dev")
 ENDIF (${OPENSSL_FOUND})
 
 set(CPACK_PACKAGE_CONTACT asyryh@gmail.com)
