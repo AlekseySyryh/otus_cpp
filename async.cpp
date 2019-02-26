@@ -6,7 +6,6 @@
 #include "observers.h"
 #include "console_worker.h"
 #include "file_worker.h"
-#include "block_builder.h"
 #include "block_processor.h"
 #include "fixed_block.h"
 #include "dynamic_block.h"
@@ -35,10 +34,9 @@ namespace async {
     static std::shared_timed_mutex mutex;
 
     handle_t connect(std::size_t bulk) {
-        std::shared_ptr<BlockBuilder> bb = std::make_shared<BlockBuilder>(bulk);
         std::unique_lock<std::shared_timed_mutex> lock(mutex);
         size_t id = clientId++;
-        clients[id] = std::make_shared<client>("", std::make_unique<BlockProcessor>(obs, bb, id));
+        clients[id] = std::make_shared<client>("", std::make_unique<BlockProcessor>(obs, bulk, id));
         return reinterpret_cast<void *>(id);
 }
 
