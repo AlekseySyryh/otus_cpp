@@ -46,7 +46,6 @@ public:
                             std::lock_guard<std::mutex> guard(sharedBlockMutex);
                             NextBlockIsFixed();
                         }
-
                     }
                     break;
             }
@@ -82,19 +81,18 @@ private:
     void addCommand(std::shared_ptr<Block> &block, const std::string &command) {
         block->addCommand(command);
         if (block->isComplete()) {
-            size_t numberOfCommands = block->getNumberOfCommands();
-            if (numberOfCommands > 0) {
-                ++blocks;
-                commands += numberOfCommands;
-                notify(block);
-            }
+            notify(block);
             NextBlockIsFixed();
         }
     }
 
     void notify(const std::shared_ptr<Block> &ptr) {
-        //auto ptr = std::const_pointer_cast<const Block>(sharedFixedBlock);
-        notifyReceivers->notify(ptr);
+        size_t numberOfCommands = ptr->getNumberOfCommands();
+        if (numberOfCommands > 0) {
+            ++blocks;
+            commands += numberOfCommands;
+            notifyReceivers->notify(ptr);
+        }
     }
 
     size_t lines = 0, blocks = 0, commands = 0, clientId, bulk;
