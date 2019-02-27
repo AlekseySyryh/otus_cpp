@@ -99,10 +99,21 @@ std::string intersection() {
                           [](const auto &a, const auto &b) {
                               return a.first < b.first;
                           });
-
-
     return to_string(results);
 }
+
+std::string symmetric_difference() {
+    std::shared_lock lock(dataMutex);
+    std::vector<std::map<int, std::string>::value_type> results;
+    std::set_symmetric_difference(a.begin(), a.end(),
+                                  b.begin(), b.end(),
+                                  std::back_inserter(results),
+                                  [](const auto &a, const auto &b) {
+                                      return a.first < b.first;
+                                  });
+    return to_string(results);
+}
+
 
 std::string query(const std::string &query) {
     std::istringstream is(query);
@@ -118,6 +129,9 @@ std::string query(const std::string &query) {
     }
     if (cmd == "INTERSECTION") {
         return intersection();
+    }
+    if (cmd == "SYMMETRIC_DIFFERENCE") {
+        return symmetric_difference();
     }
     return "ERR Unknown command";
 }
