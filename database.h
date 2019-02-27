@@ -43,10 +43,10 @@ std::string insert(std::istringstream &is) {
         //Cогласно cppreference emplace не инвалидирует итераторы, а значит одновременный
         //INSERT и INTERSECTION/SYMMETRIC_DIFFERENCE должны быть безопасны. Правда для SYMMETRIC_DIFFERENCE
         //не все так просто, но поскольку у нас есть требование к минимизации блокировок - будем там костылить...
-        std::shared_lock lock(dataMutex);
+        std::shared_lock<std::shared_mutex> lock(dataMutex);
 #else
         //Ага так оно как-то спокойнее и безопаснее.
-        std::unique_lock lock(dataMutex);
+        std::unique_lock<std::shared_mutex> lock(dataMutex);
 #endif
         std::map<int, std::string> *tbl;
         if (tblName == "A") {
@@ -76,7 +76,7 @@ std::string truncate(std::istringstream &is) {
     {
         //А вот тут только unique_lock, т.к. clear инвалидирует все что только можно
         //и это точно ни с чем не совместимо
-        std::unique_lock lock(dataMutex);
+        std::unique_lock<std::shared_mutex> lock(dataMutex);
         std::map<int, std::string> *tbl;
         if (tblName == "A") {
             tbl = &a;
@@ -112,7 +112,7 @@ std::string to_string(const std::vector<std::pair<const int, std::string>> &resu
 #endif
 
 std::string intersection() {
-    std::shared_lock lock(dataMutex);
+    std::shared_lock<std::shared_mutex> lock(dataMutex);
 #ifdef CONTROVERSIAL_DECISIONS
     auto ait = a.begin();
     auto bit = b.begin();
@@ -149,7 +149,7 @@ std::string intersection() {
 }
 
 std::string symmetric_difference() {
-    std::shared_lock lock(dataMutex);
+    std::shared_lock<std::shared_mutex> lock(dataMutex);
 #ifdef CONTROVERSIAL_DECISIONS
     //В чем тут проблема с "обычным" кодом? Может быть состояние гонки. Пусть у нас был
     //INSERT A 0 a0
