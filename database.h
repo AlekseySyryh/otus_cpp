@@ -3,6 +3,7 @@
 #include <map>
 #include <sstream>
 #include <shared_mutex>
+#include <algorithm>
 
 std::map<int, std::string> a, b;
 std::shared_mutex dataMutex;
@@ -70,6 +71,38 @@ std::string truncate(std::istringstream &is) {
     return "OK";
 }
 
+std::string to_string(const std::vector<std::map<int, std::string>::value_type> &results) {
+    std::ostringstream os;
+    std::for_each(results.begin(), results.end(),
+                  [&os](const auto &rec) {
+                      int id = rec.first;
+                      os << id << ",";
+                      if (a.count(id) == 1) {
+                          os << a[id];
+                      }
+                      os << ",";
+                      if (b.count(id) == 1) {
+                          os << b[id];
+                      }
+                      os << std::endl;
+                  });
+    os << "OK";
+    return os.str();
+}
+
+std::string intersection() {
+    std::shared_lock lock(dataMutex);
+    std::vector<std::map<int, std::string>::value_type> results;
+    std::set_intersection(a.begin(), a.end(),
+                          b.begin(), b.end(),
+                          std::back_inserter(results),
+                          [](const auto &a, const auto &b) {
+                              return a.first < b.first;
+                          });
+
+
+    return to_string(results);
+}
 
 std::string query(const std::string &query) {
     std::istringstream is(query);
@@ -82,6 +115,9 @@ std::string query(const std::string &query) {
     }
     if (cmd == "TRUNCATE") {
         return truncate(is);
+    }
+    if (cmd == "INTERSECTION") {
+        return intersection();
     }
     return "ERR Unknown command";
 }
