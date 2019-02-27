@@ -8,13 +8,15 @@ endif ($ENV{TRAVIS_BUILD_NUMBER})
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(join_server main.cpp)
+set(Boost_USE_STATIC_LIBS ON)
 set(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
 find_package(Threads REQUIRED)
 find_package(Boost REQUIRED COMPONENTS system)
 
 INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})
 LINK_DIRECTORIES(${Boost_LIBRARY_DIRS})
+
+add_executable(join_server main.cpp)
 
 target_link_libraries(join_server ${CMAKE_THREAD_LIBS_INIT} ${Boost_SYSTEM_LIBRARY})
 
@@ -26,7 +28,7 @@ set_target_properties(join_server PROPERTIES
         LINK_SEARCH_END_STATIC 1
         )
 
-set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++")
+set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++ -static")
 
 install(TARGETS join_server RUNTIME DESTINATION bin)
 
