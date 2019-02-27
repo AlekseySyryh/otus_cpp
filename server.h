@@ -2,6 +2,7 @@
 
 #include <boost/asio.hpp>
 #include <boost/bind.hpp>
+#include "database.h"
 
 boost::asio::io_service service;
 boost::asio::ip::tcp::acceptor acceptor(service);
@@ -25,9 +26,9 @@ void on_read(std::shared_ptr<boost::asio::ip::tcp::socket> sock,
         std::string data;
         std::istream is(buff.get());
         std::getline(is, data);
-        data += '\n';
-        std::cout << data;
-        sock->async_write_some(boost::asio::buffer(data), boost::bind(on_write, sock, buff, _1));
+        std::string resp = query(data);
+        resp += "\n";
+        sock->async_write_some(boost::asio::buffer(resp), boost::bind(on_write, sock, buff, _1));
     }
 }
 
