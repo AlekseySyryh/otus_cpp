@@ -47,6 +47,30 @@ std::string insert(std::istringstream &is) {
     return "OK";
 }
 
+std::string truncate(std::istringstream &is) {
+    std::string tblName;
+    is >> tblName;
+    stringToUpper(tblName);
+    if (is.fail()) {
+        return "ERR Table not specified";
+    }
+    if (tblName != "A" && tblName != "B") {
+        return "ERR Table unknown";
+    }
+    {
+        std::unique_lock lock(dataMutex);
+        std::map<int, std::string> *tbl;
+        if (tblName == "A") {
+            tbl = &a;
+        } else {
+            tbl = &b;
+        }
+        tbl->clear();
+    }
+    return "OK";
+}
+
+
 std::string query(const std::string &query) {
     std::istringstream is(query);
     std::string cmd;
@@ -55,6 +79,9 @@ std::string query(const std::string &query) {
     std::string resp;
     if (cmd == "INSERT") {
         return insert(is);
+    }
+    if (cmd == "TRUNCATE") {
+        return truncate(is);
     }
     return "ERR Unknown command";
 }
