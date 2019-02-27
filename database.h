@@ -71,7 +71,7 @@ std::string truncate(std::istringstream &is) {
     return "OK";
 }
 
-std::string to_string(const std::vector<std::map<int, std::string>::value_type> &results) {
+std::string to_string(const std::vector<std::pair<const int, std::string>> &results) {
     std::ostringstream os;
     std::for_each(results.begin(), results.end(),
                   [&os](const auto &rec) {
@@ -92,7 +92,7 @@ std::string to_string(const std::vector<std::map<int, std::string>::value_type> 
 
 std::string intersection() {
     std::shared_lock lock(dataMutex);
-    std::vector<std::map<int, std::string>::value_type> results;
+    std::vector<std::pair<const int, std::string>> results;
     std::set_intersection(a.begin(), a.end(),
                           b.begin(), b.end(),
                           std::back_inserter(results),
@@ -104,7 +104,7 @@ std::string intersection() {
 
 std::string symmetric_difference() {
     std::shared_lock lock(dataMutex);
-    std::vector<std::map<int, std::string>::value_type> results;
+    std::vector<std::pair<const int, std::string>> results;
     std::set_symmetric_difference(a.begin(), a.end(),
                                   b.begin(), b.end(),
                                   std::back_inserter(results),
