@@ -10,9 +10,9 @@ int main(int argc, char *argv[]) {
         return EXIT_FAILURE;
     }
     std::istringstream ss(argv[1]);
-    unsigned int port;
+    unsigned short port;
     ss >> port;
-    if (port < 1 || port > 65535) {
+    if (ss.fail() || port == 0) {
         std::cerr << "Порт должен быть числом от 1 до 65535" << std::endl;
         return EXIT_FAILURE;
     }
