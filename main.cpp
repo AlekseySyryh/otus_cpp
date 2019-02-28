@@ -29,35 +29,36 @@ int main(int argc, char *argv[]) {
         return EXIT_FAILURE;
     }
 
-    yamr<std::string, char, std::string, size_t> mr(mnum, rnum,
-                                                    [](const std::string &str) -> std::set<std::pair<char, std::string>> {//Map
-                                                        return std::set<std::pair<char, std::string>>{{str[0], str}};
-                                                    },
-                                                    [](const char &chr) -> size_t {//MapKeyHashFunction
-                                                        return chr;
-                                                    },
-                                                    [](const std::vector<std::pair<char, std::string>> &data) -> std::vector<size_t> {//Reduce
-                                                        size_t maxPrefix = 1;
-                                                        auto it = data.begin();
-                                                        while (it != data.end() && it + 1 != data.end()) {
-                                                            auto next = it + 1;
-                                                            auto diff = std::mismatch(
-                                                                    it->second.begin(), it->second.end(),
-                                                                    next->second.begin(), next->second.end());
-                                                            auto dist = diff.first - it->second.begin() + 1;
+    yamr<std::string, char, std::string, size_t>
+            mr(mnum, rnum,
+               [](const auto &str) {//Map
+                   return std::set<std::pair<char, std::string>>{{str[0], str}};
+               },
+               [](const auto &chr) {//MapKeyHashFunction
+                   return chr;
+               },
+               [](const auto &data) {//Reduce
+                   size_t maxPrefix = 1;
+                   auto it = data.begin();
+                   while (it != data.end() && it + 1 != data.end()) {
+                       auto next = it + 1;
+                       auto diff = std::mismatch(
+                               it->second.begin(), it->second.end(),
+                               next->second.begin(), next->second.end());
+                       auto dist = diff.first - it->second.begin() + 1;
 
-                                                            assert(dist > 0);
+                       assert(dist > 0);
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wsign-compare"
-                                                            if (dist > maxPrefix) {
-                                                                maxPrefix = dist;
-                                                            }
+                       if (dist > maxPrefix) {
+                           maxPrefix = dist;
+                       }
 #pragma GCC diagnostic pop
 
-                                                            ++it;
-                                                        }
-                                                        return {maxPrefix};
-                                                    });
+                       ++it;
+                   }
+                   return std::vector<size_t>{maxPrefix};
+               });
     try {
         mr.process(src);
     }

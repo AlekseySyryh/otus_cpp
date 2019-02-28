@@ -15,13 +15,13 @@ template<typename InType,
         typename ReduceValueType>
 class yamr {
 public:
-
+    typedef std::pair<MapKeyType, MapValueType> MapResult;
     yamr(size_t mnum,
          size_t rnum,
-         std::function<std::set<std::pair<MapKeyType, MapValueType>>(const InType &)> mapFunction,
+         std::function<std::set<MapResult>(const InType &)> mapFunction,
          std::function<size_t(const MapKeyType &)> keyHashFunction,
          std::function<std::vector<ReduceValueType>(
-                 const std::vector<std::pair<MapKeyType, MapValueType>> &)> reduceFunction) :
+                 const std::vector<MapResult> &)> reduceFunction) :
             mnum(mnum),
             rnum(rnum),
             mapFunction(mapFunction),
@@ -38,14 +38,14 @@ public:
 
 private:
     size_t mnum, rnum;
-    const std::function<std::set<std::pair<MapKeyType, MapValueType>>(const InType &)> mapFunction;
+    const std::function<std::set<MapResult>(const InType &)> mapFunction;
     const std::function<size_t(const MapKeyType &)> keyHashFunction;
     const std::function<std::vector<ReduceValueType>(
-            const std::vector<std::pair<MapKeyType, MapValueType>> &)> reduceFunction;
+            const std::vector<MapResult> &)> reduceFunction;
 
-    std::set<std::pair<MapKeyType, MapValueType>> mapThread(std::string fileName, size_t from, size_t to) {
+    std::set<MapResult> mapThread(std::string fileName, size_t from, size_t to) {
         std::ifstream fs(fileName);
-        std::set<std::pair<MapKeyType, MapValueType>> results;
+        std::set<MapResult> results;
         fs.seekg(from);
         size_t len = to - from;
         if (len > 0) {
@@ -55,7 +55,7 @@ private:
             auto to = data.end();
             while (from != to) {
                 auto find = std::find(from, to, '\n');
-                std::set<std::pair<MapKeyType, MapValueType>> rowmap = mapFunction(std::string(from, find));
+                std::set<MapResult> rowmap = mapFunction(std::string(from, find));
                 results.insert(rowmap.begin(), rowmap.end());
                 if (find != to) {
                     ++find;
@@ -67,7 +67,7 @@ private:
     }
 
     void reduceThread(const std::string &fileName,
-                      const std::vector<std::vector<std::pair<MapKeyType, MapValueType>>> &reduceInput,
+                      const std::vector<std::vector<MapResult>> &reduceInput,
                       std::mutex &consoleLock, size_t num) const {
         auto reduceResult = reduceFunction(reduceInput[num]);
         std::ofstream os(fileName + '.' + std::__cxx11::to_string(num));
@@ -121,7 +121,7 @@ private:
         return offsets;
     }
 
-    std::list<std::set<std::pair<MapKeyType, MapValueType>>> doMap(
+    std::list<std::set<MapResult>> doMap(
             const std::string &fileName,
             const std::vector<size_t> &offsets) {
         std::vector<std::future<std::set<std::pair<MapKeyType, MapValueType>>>> futures;
@@ -137,8 +137,8 @@ private:
         return mapResults;
     }
 
-    std::vector<std::vector<std::pair<MapKeyType, MapValueType>>>
-    mapToReduce(std::list<std::set<std::pair<MapKeyType, MapValueType>>> &mapResults) const {
+    std::vector<std::vector<MapResult>>
+    mapToReduce(std::list<std::set<MapResult>> &mapResults) const {
         std::vector<std::vector<std::pair<MapKeyType, MapValueType>>> reduceInput(rnum);
         while (mapResults.size() > 0) {
             std::optional<std::pair<MapKeyType, MapValueType>> bestPair;
@@ -163,7 +163,7 @@ private:
     }
 
     void doReduce(const std::string &fileName,
-                  const std::vector<std::vector<std::pair<MapKeyType, MapValueType>>> &reduceInput) const {
+                  const std::vector<std::vector<MapResult>> &reduceInput) const {
         std::vector<std::future<void>> futures;
         futures.reserve(rnum);
         std::mutex consoleLock;
