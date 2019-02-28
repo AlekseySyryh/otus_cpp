@@ -153,6 +153,7 @@ private:
             for (auto &m : mapResults) {
                 if (m.begin() != m.end() && *(m.begin()) == bestPair) {
                     m.erase(m.begin());
+                    break;
                 }
             }
             mapResults.remove_if([](auto &rec) { return rec.size() == 0; });

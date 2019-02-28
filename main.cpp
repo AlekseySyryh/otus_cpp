@@ -42,6 +42,16 @@ int main(int argc, char *argv[]) {
                    auto it = data.begin();
                    while (it != data.end() && it + 1 != data.end()) {
                        auto next = it + 1;
+                       if (it->first != next->first) {
+                           //Первая буква различна - смысла дальше мучаться нету...
+                           ++it;
+                           continue;
+                       }
+                       if (it->second == next->second) {
+                           //Если нашли дубль, то формально мы никак не сможем идентифицировать строку
+                           maxPrefix = std::numeric_limits<size_t>::max();
+                           break;
+                       }
                        auto diff = std::mismatch(
                                it->second.begin(), it->second.end(),
                                next->second.begin(), next->second.end());
