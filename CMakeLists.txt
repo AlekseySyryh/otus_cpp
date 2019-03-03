@@ -6,5 +6,7 @@ set(CMAKE_CXX_STANDARD 14)
 find_package(dlib REQUIRED)
 
 add_executable(kkmeans_gen generator.cpp)
+add_executable(kkmeans kkmeans.cpp)
 
+target_link_libraries(kkmeans dlib::dlib)
 target_link_libraries(kkmeans_gen dlib::dlib)
