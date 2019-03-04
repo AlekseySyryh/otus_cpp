@@ -1,15 +1,14 @@
 #include <iostream>
 #include <sstream>
-#include <fstream>
 #include <dlib/rand.h>
 
-void generateStars(std::ofstream &fs, size_t stars, dlib::rand &rnd) {
+void generateStars(size_t stars, dlib::rand &rnd) {
     for (size_t i = 0; i < stars; ++i) {
-        fs << rnd.get_double_in_range(-100, 100) << ";" << rnd.get_double_in_range(-100, 100) << std::endl;
+        std::cout << rnd.get_double_in_range(-100, 100) << ";" << rnd.get_double_in_range(-100, 100) << std::endl;
     }
 }
 
-void generateSample(std::ofstream &fs, dlib::rand &rnd) {
+void generateSample(dlib::rand &rnd) {
     double x, y;
     const long num = 50;
     double radius = 0.5;
@@ -19,7 +18,7 @@ void generateSample(std::ofstream &fs, dlib::rand &rnd) {
             sign = -1;
         x = 2 * radius * rnd.get_random_double() - radius;
         y = sign * sqrt(radius * radius - x * x);
-        fs << x << ";" << y << std::endl;
+        std::cout << x << ";" << y << std::endl;
     }
 
     radius = 10.0;
@@ -30,7 +29,7 @@ void generateSample(std::ofstream &fs, dlib::rand &rnd) {
         x = 2 * radius * rnd.get_random_double() - radius;
         y = sign * sqrt(radius * radius - x * x);
 
-        fs << x << ";" << y << std::endl;
+        std::cout << x << ";" << y << std::endl;
     }
 
     // make some samples in a circle around the point (25,25)
@@ -46,33 +45,31 @@ void generateSample(std::ofstream &fs, dlib::rand &rnd) {
         x += 25;
         y += 25;
 
-        fs << x << ";" << y << std::endl;
+        std::cout << x << ";" << y << std::endl;
     }
 }
 
 int main(int argc, char *argv[]) {
-    if (argc < 2 || argc > 3) {
+    if (argc > 2) {
         std::cerr << "Порядок запуска:\n"
                      "# kkmeans_gen <file> [number_of_stars]\n"
                      "где\n"
-                     "• file - имя файла.\n"
                      "• number_of_stars – количество звезд (если не указано - генерируются данные из примера)"
                   << std::endl;
         return EXIT_FAILURE;
     }
-    std::ofstream fs(argv[1]);
     dlib::rand rnd(time(0));
-    if (argc == 2) {
-        generateSample(fs, rnd);
+    if (argc == 1) {
+        generateSample(rnd);
         return EXIT_SUCCESS;
     }
-    std::istringstream ss(argv[2]);
+    std::istringstream ss(argv[1]);
     size_t stars;
     ss >> stars;
     if (!ss.fail()) {
-        generateStars(fs, stars, rnd);
+        generateStars(stars, rnd);
     } else {
-        generateSample(fs, rnd);
+        generateSample(rnd);
     }
     return EXIT_SUCCESS;
 }
