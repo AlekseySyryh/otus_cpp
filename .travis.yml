@@ -6,9 +6,10 @@ before_script:
   - sudo apt-get update
   - sudo apt-get install python3-pip -y
   - pip3 install setuptools
+  - pip3 install wheel
   - pip3 install conan
   - conan remote add omaralvarez https://api.bintray.com/conan/omaralvarez/public-conan
-  - conan install . --bulild dlib
+  - conan install . -s build_type=Release --build=missing
 script:
   - cmake .
   - cmake --build .
