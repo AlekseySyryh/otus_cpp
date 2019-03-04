@@ -3,8 +3,9 @@ compiler: gcc
 dist: xenial
 
 before_script:
+  - echo "deb http://archive.ubuntu.com/ubuntu xenial main universe" \
+    | sudo tee -a /etc/apt/sources.list
   - sudo apt-get update
-  - sudo apt-get upgrade
   - sudo apt-get install libdlib-dev libopenblas-dev -y
 script:
   - cmake .
