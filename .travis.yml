@@ -4,6 +4,7 @@ dist: xenial
 
 before_script:
   - sudo apt-get update
+  - sudo apt-get upgrade
   - sudo apt-get install libdlib-dev libopenblas-dev -y
 script:
   - cmake .
