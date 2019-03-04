@@ -1,0 +1,15 @@
+language: cpp
+compiler: gcc
+dist: xenial
+
+before_script:
+  - sudo apt-get update
+script:
+  - cmake .
+  - cmake --build .
+  - cmake --build . --target package
+deploy:
+  provider: script
+  skip_cleanup: true
+  script:
+    - sh .travis-deploy.sh
