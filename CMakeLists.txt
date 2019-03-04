@@ -6,7 +6,7 @@ else ($ENV{TRAVIS_BUILD_NUMBER})
 endif ($ENV{TRAVIS_BUILD_NUMBER})
 
 set(CMAKE_CXX_STANDARD 14)
-
+set(CMAKE_FIND_LIBRARY_SUFFIXES ".so")
 find_package(dlib REQUIRED)
 
 add_executable(kkmeans_gen generator.cpp)
