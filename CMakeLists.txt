@@ -6,14 +6,15 @@ else ($ENV{TRAVIS_BUILD_NUMBER})
 endif ($ENV{TRAVIS_BUILD_NUMBER})
 
 set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_FIND_LIBRARY_SUFFIXES ".so")
-find_package(dlib REQUIRED)
+
+include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
+conan_basic_setup(TARGETS)
 
 add_executable(kkmeans_gen generator.cpp)
 add_executable(kkmeans kkmeans.cpp)
 
-target_link_libraries(kkmeans dlib::dlib)
-target_link_libraries(kkmeans_gen dlib::dlib)
+target_link_libraries(kkmeans CONAN_PKG::dlib)
+target_link_libraries(kkmeans_gen CONAN_PKG::dlib)
 
 set_target_properties(kkmeans kkmeans_gen PROPERTIES
         CXX_STANDARD 14
