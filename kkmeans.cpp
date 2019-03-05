@@ -5,7 +5,7 @@
 
 
 typedef dlib::matrix<double, 2, 1> sample_type;
-typedef dlib::radial_basis_kernel<sample_type> kernel_type;
+typedef dlib::polynomial_kernel<sample_type> kernel_type;
 
 int main(int argc, char *argv[]) {
     if (argc != 2) {
@@ -33,7 +33,7 @@ int main(int argc, char *argv[]) {
         samples.push_back(m);
     }
     std::vector<sample_type> initial_centers;
-    dlib::kcentroid<kernel_type> kc(kernel_type(0.1), 0.01, 8);
+    dlib::kcentroid<kernel_type> kc(kernel_type(), 0.01, 8);
     dlib::kkmeans<kernel_type> test(kc);
     test.set_number_of_centers(nclust);
     pick_initial_centers(3, initial_centers, samples, test.get_kernel());
