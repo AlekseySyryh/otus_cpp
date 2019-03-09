@@ -36,7 +36,7 @@ int main(int argc, char *argv[]) {
     dlib::kcentroid<kernel_type> kc(kernel_type(), 0.01, 8);
     dlib::kkmeans<kernel_type> test(kc);
     test.set_number_of_centers(nclust);
-    pick_initial_centers(3, initial_centers, samples, test.get_kernel());
+    pick_initial_centers(nclust, initial_centers, samples, test.get_kernel());
     test.train(samples, initial_centers);
     for (unsigned long i = 0; i < samples.size(); ++i) {
         std::cout << samples[i](0) << ";" << samples[i](1) << ";cluster" << test(samples[i]) + 1 << std::endl;
