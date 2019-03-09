@@ -23,7 +23,7 @@ set_target_properties(rclst PROPERTIES
         CXX_STANDARD_REQUIRED ON
         COMPILE_OPTIONS "-Wpedantic;-Wall;-Wextra;-Werror;")
 
-install(TARGETS rclst RUNTIME DESTINATION bin)
+install(TARGETS rclst rclss RUNTIME DESTINATION bin)
 
 set(CPACK_GENERATOR DEB)
 
