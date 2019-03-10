@@ -9,8 +9,8 @@ public:
                    const options &opt,
                    const boost::function<boost::container::vector<unsigned char>(
                            boost::container::vector<unsigned char> &)> &hashFunc) :
-            path(path), opt(opt), hashFunc(hashFunc) {
-        size_t blocks = (file_size(path) + opt.blockSize - 1) / opt.blockSize;
+            path(path), fileSize(file_size(path)), opt(opt), hashFunc(hashFunc) {
+        size_t blocks = (fileSize + opt.blockSize - 1) / opt.blockSize;
         hashes.resize(blocks);
     }
 
@@ -43,6 +43,9 @@ public:
         if (getName() == other.getName()) {
             return false;
         }
+        if (fileSize != other.fileSize) {
+            return fileSize < other.fileSize;
+        }
         auto t = boost::minmax(getSize(), other.getSize());
         auto minLen = t.get<0>();
         for (size_t i = 0; i < minLen; ++i) {
@@ -52,11 +55,12 @@ public:
                 return my < their;
             }
         }
-        return getSize() < other.getSize();
+        return false;
     }
 private:
     mutable boost::container::vector<boost::optional<boost::container::vector<unsigned char>>> hashes;
     const boost::filesystem::path path;
+    const size_t fileSize;
     const options &opt;
     const boost::function<boost::container::vector<unsigned char>(boost::container::vector<unsigned char> &)> &hashFunc;
 };
