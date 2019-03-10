@@ -46,9 +46,8 @@ public:
         if (fileSize != other.fileSize) {
             return fileSize < other.fileSize;
         }
-        auto t = boost::minmax(getSize(), other.getSize());
-        auto minLen = t.get<0>();
-        for (size_t i = 0; i < minLen; ++i) {
+        auto len = getSize();
+        for (size_t i = 0; i < len; ++i) {
             const auto &my = getBlock(i);
             const auto &their = other.getBlock(i);
             if (my != their) {
