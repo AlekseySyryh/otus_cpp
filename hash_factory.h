@@ -33,7 +33,7 @@ boost::container::vector<unsigned char> getCrcHash(boost::container::vector<unsi
     return toVector(res);
 }
 
-boost::container::vector<unsigned char> getTR1Hash(boost::container::vector<unsigned char> &buff) {
+boost::container::vector<unsigned char> getBoostHash(boost::container::vector<unsigned char> &buff) {
     boost::hash<std::string> hasher;
     std::size_t res = hasher(std::string((reinterpret_cast<char *>(buff.data())), buff.size()));
     return toVector(res);
@@ -89,7 +89,7 @@ class hashFactory {
 public:
     hashFactory() noexcept {
         functions["CRC"] = getCrcHash;
-        functions["TR1"] = getTR1Hash;
+        functions["BOOST"] = getBoostHash;
 #ifdef WITH_OPENSSL
         functions["MD4"] = getMD4Hash;
         functions["MD5"] = getMD5Hash;
