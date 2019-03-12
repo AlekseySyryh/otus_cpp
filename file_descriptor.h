@@ -1,7 +1,8 @@
 #pragma once
 
-#include <boost/algorithm/minmax.hpp>
+
 #include <boost/tuple/tuple.hpp>
+#include <istream>
 
 class fileDescriptor {
 public:
@@ -22,10 +23,15 @@ public:
             if (opt.debug) {
                 std::cout << "Читаем файл " << path.filename().string() << " блок " << block << std::endl;
             }
-            boost::iostreams::file_source in(path.string(), BOOST_IOS::binary);
-            boost::iostreams::seek(in, block * opt.blockSize, BOOST_IOS::beg);
+            std::ifstream f;
+            f.rdbuf()->pubsetbuf(0,0);
+            f.open(path.string());
+            f.seekg(block * opt.blockSize, std::ios::beg);
+
             boost::container::vector<unsigned char> buf(opt.blockSize);
-            in.read(reinterpret_cast<char *>(buf.data()), buf.size());
+
+            f.read(reinterpret_cast<char *>(buf.data()), buf.size());
+
             hashes[block] = hashFunc(buf);
         }
         return hashes[block].get();
