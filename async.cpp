@@ -42,8 +42,11 @@ namespace async {
 
     void receive(handle_t handle, const char *data, std::size_t size) {
         auto id = reinterpret_cast<size_t>(handle);
-        std::unique_lock<std::shared_timed_mutex> lock(mutex);
-        std::shared_ptr<client> client = clients[id];
+        std::shared_ptr<client> client;
+        {
+            std::unique_lock<std::shared_timed_mutex> lock(mutex);
+            client = clients[id];
+        }
         std::lock_guard<std::mutex> reenterGuard(client->reenterMutex);
         client->buffer.append(data, size);
         std::string::iterator it;
