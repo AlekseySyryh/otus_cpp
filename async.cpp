@@ -60,6 +60,10 @@ namespace async {
     void disconnect(handle_t handle) {
         auto id = reinterpret_cast<size_t>(handle);
         std::unique_lock<std::shared_timed_mutex> lock(mutex);
+        if (clients.size() == 1) {
+            std::shared_ptr<client> client = clients[id];
+            client->proc->closeSharedBlock();
+        }
         clients.erase(id);
 }
 }

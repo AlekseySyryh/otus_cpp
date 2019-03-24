@@ -63,6 +63,14 @@ public:
         }
     }
 
+    void closeSharedBlock() {
+        std::lock_guard<std::mutex> guard(sharedBlockMutex);
+        if (sharedFixedBlock != nullptr &&
+            sharedFixedBlock->getNumberOfCommands() != 0) {
+            notify(sharedFixedBlock);
+            sharedFixedBlock = nullptr;
+        }
+    }
 
 private:
     void NextBlockIsDynamic() {
